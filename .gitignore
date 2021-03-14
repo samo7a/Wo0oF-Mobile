@@ -1,0 +1,65 @@
+# OSX
+#
+.DS_Store
+
+# Xcode
+#
+woof/build/
+woof/*.pbxuser
+woof/!default.pbxuser
+woof/*.mode1v3
+woof/!default.mode1v3
+woof/*.mode2v3
+woof/!default.mode2v3
+woof/*.perspectivev3
+woof/!default.perspectivev3
+woof/xcuserdata
+woof/*.xccheckout
+woof/*.moved-aside
+woof/DerivedData
+woof/*.hmap
+woof/*.ipa
+woof/*.xcuserstate
+woof/project.xcworkspace
+
+# Android/IntelliJ
+#
+woof/build/
+woof/.idea
+woof/.gradle
+woof/local.properties
+woof/*.iml
+woof/*.hprof
+
+# node.js
+#
+woof/node_modules/
+woof/npm-debug.log
+woof/yarn-error.log
+
+# BUCK
+woof/buck-out/
+woof/\.buckd/
+woof/*.keystore
+woof/!debug.keystore
+
+# fastlane
+#
+# It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the
+# screenshots whenever they are needed.
+# For more information about the recommended setup visit:
+# https://docs.fastlane.tools/best-practices/source-control/
+
+woof/*/fastlane/report.xml
+woof/*/fastlane/Preview.html
+woof/*/fastlane/screenshots
+
+# Bundle artifacts
+woof/*.jsbundle
+
+# CocoaPods
+woof/ios/Pods/
+
+# Expo
+woof/.expo/*
+woof/web-build/
