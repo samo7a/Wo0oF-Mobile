@@ -4,20 +4,23 @@ import {StyleSheet, Text, View } from 'react-native';
 
 const LoginScene = () => {
     return (
-        <View>
-            <Text>
+        <View >
+            <Text style={styles.container} >
                 Login Page
             </Text>
-        </View>
+        </View> 
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-      flex: 1,
-      backgroundColor: '#fff',
-      alignItems: 'center',
-      justifyContent: 'center',
+        padding : 50,
+        margin : 10,
+        flex: 1,
+        backgroundColor: 'black',
+        color : 'white',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
 });
 export default LoginScene; 

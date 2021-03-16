@@ -12,7 +12,7 @@ const SplashScreen = () => {
             <View style={styles.spinner}>
               <ActivityIndicator color="#EF233C" size="large"/>
             </View>
-        </LinearGradient>
+        </LinearGradient> 
     );
 }
  

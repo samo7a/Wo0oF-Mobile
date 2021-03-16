@@ -9,7 +9,7 @@ const SignupScene = () => {
                 Signup Page
             </Text>
         </View>
-    );
+    ); 
 }
 
 const styles = StyleSheet.create({
