@@ -30,7 +30,7 @@ woof/.gradle
 woof/local.properties
 woof/*.iml
 woof/*.hprof
-
+woof/android/.gradle/6.3/executionHistory/executionHistory.bin
 # node.js
 #
 woof/node_modules/
