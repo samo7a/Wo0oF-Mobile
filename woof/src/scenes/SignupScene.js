@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Button, Image, TouchableWithoutFeedback ,Keyboa
 import { useHistory} from "react-router-native";
 import { Form, FormItem} from 'react-native-form-component';
 import LinearGradient from 'react-native-linear-gradient';
+import axios from 'axios';
 
 import logo from '../images/logo.png';
 
@@ -14,7 +15,9 @@ const SignupScene = () => {
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const signupHandler = () => Alert.alert("Alert Title", `first name : ${firstName}, last name : ${lastName}, email : ${email}`);
+    const signupHandler = () => {
+        Alert.alert("Alert Title", `first name : ${firstName}, last name : ${lastName}, email : ${email}`);
+    }
     
     return (
         <SafeAreaView>
