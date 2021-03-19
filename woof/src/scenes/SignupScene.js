@@ -1,92 +1,78 @@
-import React, {useState, useRef} from 'react';
-import { StyleSheet, Text, View, Button, Image, KeyboardAvoidingView, TouchableWithoutFeedback ,Keyboard, Platform, SafeAreaView, RefreshControl} from 'react-native';
+import React, {useState} from 'react';
+import { StyleSheet, Text, View, Button, Image, TouchableWithoutFeedback ,Keyboard, SafeAreaView, Alert} from 'react-native';
 import { useHistory} from "react-router-native";
-import { Form, FormItem, Label } from 'react-native-form-component';
+import { Form, FormItem} from 'react-native-form-component';
 import LinearGradient from 'react-native-linear-gradient';
-import KeyboardSpacer from 'react-native-keyboard-spacer';
-
 
 import logo from '../images/logo.png';
-import { FlatList, ScrollView, TextInput } from 'react-native-gesture-handler';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+
 
 const SignupScene = () => {
-    const scrollRef = useRef();
-  
-  	const handleClick = number => {
-    	scrollRef.current.ScrollTo({
-          y: (100 * number),
-          animated: true,
-        });
-    }
-  
+
     const history = useHistory();
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const signupHandler = () => console.warn(email);
+    const signupHandler = () => Alert.alert("Alert Title", `first name : ${firstName}, last name : ${lastName}, email : ${email}`);
     
     return (
-        <SafeAreaView >
-        <LinearGradient colors={['#8D99AE','#EDF2F4']} style={styles.container}>
-            
-           
-                
-                    <TouchableWithoutFeedback  onPress={Keyboard.dismiss} style={{flex:1}}>
-                        <View style={{flex:1}}>
-                        
-                            <View style={{flex:1}}>
-                                <Image style={styles.logo} source={logo} />
+        <SafeAreaView>
+            <LinearGradient colors={['#8D99AE','#EDF2F4']} style={styles.container}>
+                <TouchableWithoutFeedback  onPress={Keyboard.dismiss} style={{flex:1}}>
+                    <View >
+                        <Image style={styles.logo} source={logo} />
+                        <Form style={styles.form} onButtonPress = {() => {}} buttonStyle={styles.submit}>
+                            <FormItem
+                                style = {styles.input}
+                                label="First Name"
+                                textInputStyle = {styles.inputText}
+                                placeholder = "First Name"
+                                isRequired
+                                textContentType = 'givenName'
+                                value ={firstName}
+                                onChangeText = {(e) => setFirstName(e)}
+                            />
+                            <FormItem
+                                style = {styles.input}
+                                label="Last Name"
+                                textInputStyle = {styles.inputText}
+                                placeholder = "Last Name"
+                                isRequired
+                                textContentType = 'familyName'
+                                value ={lastName}
+                                onChangeText = {(e) => setLastName(e)}
+                            />
+                            <FormItem
+                                style = {styles.input}
+                                label="Email"
+                                textInputStyle = {styles.inputText}
+                                placeholder = " Email"
+                                isRequired
+                                textContentType = 'emailAddress'
+                                keyboardType = 'email-address'
+                                value ={email}
+                                onChangeText = {(e) => setEmail(e)}
+                            />  
+                            <FormItem
+                                style = {styles.input}
+                                label="Password"
+                                textInputStyle = {styles.inputText}
+                                placeholder = "Password"
+                                isRequired
+                                textContentType = 'password'
+                                secureTextEntry
+                                value ={password}
+                                onChangeText = {(e) => setPassword(e)}
                                 
-                                <Form style={styles.form} onButtonPress = {() => {}} buttonStyle={styles.submit}>
-                                <KeyboardAvoidingView behavior = 'padding'>
-                                    <FormItem
-                                        style = {styles.input}
-                                        label="First Name"
-                                        placeholder = "First Name"
-                                        isRequired
-                                        value ={firstName}
-                                        onChangeText = {(e) => setFirstName(e)}
-                                    />
-                                    
-                                    <FormItem
-                                        label="Last Name"
-                                        isRequired
-                                        value ={lastName}
-                                        onChangeText = {(e) => setLastName(e)}
-                                    />
-                                    
-                                    <FormItem
-                                        label="Email"
-                                        isRequired
-                                        value ={email}
-                                        onChangeText = {(e) => setEmail(e)}
-                                    />
-                                     
-                                    <FormItem
-                                        label="Password"
-                                        isRequired
-                                        value ={password}
-                                        onChangeText = {(e) => setPassword(e)}
-                                        
-                                    /> 
-                                     
-                                    <Button title="Sign up" style={styles.button} onButtonPress={signupHandler}/>
-                                    
-                                <Text style={styles.text}>Already have an account?</Text>
-                                
-                                <Button style={styles.link} title="Login" onPress={ () => history.push("/login")} />
-                                </KeyboardAvoidingView>
-                                </Form>
-                                
-                            </View>
-                            
-                        </View>
-                        
-                    </TouchableWithoutFeedback>
-        </LinearGradient>
-        
+                            />  
+                            <Button title="Sign up" buttonStyle={styles.button} color = '#EF233C' onPress={signupHandler}/>
+                            <Text style={styles.text}>Already have an account?</Text>
+                            <Text style={styles.link} onPress={ () => history.push("/login")} > Login </Text>
+                        </Form>
+                    </View>    
+                 </TouchableWithoutFeedback>
+            </LinearGradient>
         </SafeAreaView>
     ); 
 }
@@ -95,47 +81,57 @@ const styles = StyleSheet.create({
     container: {
         padding : 20,
         height : 1300,
-        
-
-        
     },
     logo : {
-        marginTop : 25,
+        marginTop : 10,
         alignSelf : 'center',
         width : 75,
         height : 75
     },
-    button : {
-      
-
-    },
+    submit : {
+        width : 0, 
+        height : 0,
+        marginTop : 100,
+    }, 
     form : {
         padding : 1,
         backgroundColor : 'red',
         height : 900,
         flex : 1,
+        alignContent : 'space-around',
         
     },
+    button : {
+        width : 300,
+        margin : 10,
+    },
+    
     link : {
-        marginBottom : 100,
         color : 'blue',
+        alignSelf : 'center',
+        fontSize : 18,
+        fontWeight : '400',
+        margin : 10,
+        textDecorationLine: 'underline',
     },
     text : {
+        color : 'black',
         alignSelf : 'center',
+        fontSize : 18,
+        fontWeight : '500',
+        margin : 10
     },
     input: {
         width: 350,
-        height : 1,
-        margin: 10,
-        color: 'white',
-        borderRadius: 14,
-        fontSize: 18,
-        fontWeight: '500',
+        height : 15,
+        margin : 10,
+        borderRadius : 14,
       },
-      submit : {
-        width:0, height:0 
-      }
     
+    inputText : {
+        fontSize : 18,
+        fontWeight : '500',
+    },
 });
 
 export default SignupScene; 
