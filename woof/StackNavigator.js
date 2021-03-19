@@ -1,7 +1,7 @@
 import {createStackNavigator} from 'react-navigation-stack';
 import {createAppContainer} from 'react-navigation';
 
-import Homescene from './src/scenes/HomeScene';
+import Homescene from './src/scenes/WelcomeScene';
 import LoginScene from './src/scenes/LoginScene';
 import SplashScene from './src/scenes/SplashScreen';
 import SignupScene from './src/scenes/SignupScene';
