@@ -1,22 +1,37 @@
-export const setObjectValue = async (value) => {
+import AsyncStorage from 'react-native';
+
+export const save = async (value) => {
     try {
-      const jsonValue = JSON.stringify(value)
-      await AsyncStorage.setItem('key', jsonValue)
+      const jsonValue = JSON.stringify(value);
+      await AsyncStorage.setItem('key', jsonValue);
     } catch(e) {
-      // save error
+     
     }
-  
-    console.log('Done.')
+  }
+export const getError = async () => {
+  try {
+    const jsonValue = await AsyncStorage.getItem('key');
+    return jsonValue != null ? JSON.parse(jsonValue) : null;
+  }
+  catch (e) {
+    await AsyncStorage.setItem('error', e);
+  }
+}
+  export const load = async () => {
+    try {
+      const jsonValue = await AsyncStorage.getItem('key');
+      return jsonValue != null ? JSON.parse(jsonValue) : null;
+    } catch(e) {
+      await AsyncStorage.setItem('error', e);
+    }
   }
 
-  export const getMyObject = async () => {
+  export const remove = async () =>{
     try {
-      const jsonValue = await AsyncStorage.getItem('@key')
-      return jsonValue != null ? JSON.parse(jsonValue) : null
-    } catch(e) {
-      // read error
+      await AsyncStorage.removeItem('key');
     }
-  
-    console.log('Done.')
-  
+    catch (e){
+      await AsyncStorage.setItem('error', e);
+    }
   }
+
