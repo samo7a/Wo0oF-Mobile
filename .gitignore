@@ -4,6 +4,8 @@
 
 # Xcode
 #
+woof/android/
+woof/ios/
 woof/build/
 woof/*.pbxuser
 woof/!default.pbxuser
