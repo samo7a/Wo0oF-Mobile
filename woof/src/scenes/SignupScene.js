@@ -50,7 +50,7 @@ const SignupScene = () => {
         ProfilePicture : profilePic, 
         ShortBio : bio
        }
-       axios.post('/user', json)
+       axios.post('/api/registerUser', json)
       .then(function (response) {
         console.warn(response);
       })
@@ -134,16 +134,13 @@ const SignupScene = () => {
                                     text="Are you a dog owner?"
                                     iconStyle={{ borderColor: "red" }}
                                     textStyle={{  textDecorationLine : "none"}}
-                                    onPress={() => {
-                                        if (isOwner === false) setIsOwner(true)
-                                        else setIsOwner(false);
-                                    }}
+                                    onPress={() => {setIsOwner(!isOwner)}}
                                     style={styles.checkbox}
                                 />
                                 <TouchableOpacity onPress={showModal}>
                                     <View style={styles.button}>
                                     <Text style={{ fontFamily: 'Arial', fontSize: 15, color: 'white', alignSelf: 'center' }}>
-                                        Signup
+                                        Continue ...
                                     <Icon name="chevron-up" size={15} color="white" />
                                     </Text>
                                     </View>

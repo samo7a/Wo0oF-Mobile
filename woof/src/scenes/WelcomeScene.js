@@ -10,7 +10,7 @@ const WelcomeScene = () => {
     useEffect(() => {
         setTimeout(() =>{
             setIsVisible(false);
-        }, 1000); 
+        }, 2000); 
     }, []);
     return (
         <View>
