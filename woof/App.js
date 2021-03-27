@@ -10,6 +10,7 @@ import WelcomeScene from './src/scenes/WelcomeScene';
 import LoginScene from './src/scenes/LoginScene';
 import SignupScene from './src/scenes/SignupScene';
 import HomeScene from './src/scenes/HomeScene';
+import PasswordResetScene from './src/scenes/PasswordResetScene';
 
 
 export default function App() {
@@ -20,6 +21,7 @@ export default function App() {
         <Route exact path = "/login" component={LoginScene} />
         <Route exact path = "/signup" component={SignupScene} />
         <Route exact path = "/home" component={HomeScene} />
+        <Route exact path = '/reset' component={PasswordResetScene}/>
       </Switch>
       
     </NativeRouter>

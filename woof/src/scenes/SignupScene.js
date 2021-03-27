@@ -19,7 +19,7 @@ import BouncyCheckbox from 'react-native-bouncy-checkbox';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import logo from '../images/logo.png';
 import defaultProfilePic from '../images/default-profile-with-dog.png';
-
+import styles from '../../styles/GlobalStyles';
 import * as ImagePicker from 'react-native-image-picker'; 
 
 import axios from '../utilities/axios';
@@ -50,7 +50,7 @@ const SignupScene = () => {
         ProfilePicture : profilePic, 
         ShortBio : bio
        }
-       axios.post('/api/registerUser', json)
+       axios.post('/registerUser', json)
       .then(function (response) {
         console.warn(response);
       })
@@ -219,109 +219,5 @@ const SignupScene = () => {
         </SafeAreaView>
     ); 
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: "flex-end",
-        alignContent: 'stretch',
-        padding : 10,
-       
-    },
-    logo : {
-        alignSelf : 'center',
-        width : 60,
-        height : 60
-    },
-
-    form : {
-        padding : 10,
-        height : 500,
-        flexDirection : 'column',
-        alignItems : 'center',
-        // justifyContent : 'space-evenly'
-        
-    },
-    
-    text : {
-        color : 'black',
-        alignSelf : 'center',
-        fontSize : 15,
-        fontWeight : '500',
-    },
-    input: {
-        width: 300,
-        height : 10,
-        margin : 1,
-        borderRadius : 10,
-        alignSelf : 'center',
-        justifyContent : 'flex-start'
-      },
-    
-    inputText : {
-        borderWidth: 1,
-        borderColor: '#2B2D42',
-        borderStyle : 'solid',
-        padding : 10,
-        fontSize: 18,
-        borderRadius : 6,
-        height: 40,
-        width: '75%',
-        margin: 10,
-        fontWeight : '600',
-        alignSelf : 'center',
-    },
-    inputbio : {
-        borderWidth: 1,
-        borderColor: '#2B2D42',
-        borderStyle : 'solid',
-        padding : 10,
-        fontSize: 18,
-        borderRadius : 6,
-        height: 90,
-        width: '75%',
-        margin: 10,
-        fontWeight : '600',
-        alignSelf : 'center',
-        //textAlignVertical : 'top'
-    },
-    checkbox : {
-        alignSelf : 'center',
-        padding : 10,
-    },
-
-    button : {
-        borderRadius : 8,
-        alignSelf: 'center',
-        backgroundColor : "#EF233C",
-        width : 200,
-        height : 25,
-        margin : 10,
-    },
-    
-    link : {
-        color : 'blue',
-        alignSelf : 'center',
-        fontSize : 15,
-        fontWeight : '400',
-        margin :5,
-        textDecorationLine: 'underline',
-    },
-    modal : {
-        flex: 1,
-        justifyContent: 'flex-end',
-        alignContent: 'center',
-        padding : 10,
-    },
-    photo : {
-        height: 150,
-        width : 150,
-        borderRadius : 75,
-        alignSelf : 'center',
-        justifyContent : 'space-evenly',
-
-        
-    }
-});
 
 export default SignupScene; 
