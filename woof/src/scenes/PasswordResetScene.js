@@ -60,6 +60,7 @@ const PasswordResetScene = () => {
     }
     const confirmPassord = () => {
         modalHandler();
+        history.push('/home');
     }
 
     return (

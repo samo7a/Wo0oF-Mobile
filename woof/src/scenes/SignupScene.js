@@ -57,6 +57,7 @@ const SignupScene = () => {
       .catch(function (error) {
         console.warn(error);
       });
+      history.push('/login');
     }
     const showModal = () => {
         setVisible(true);

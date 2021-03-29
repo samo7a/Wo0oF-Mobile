@@ -20,8 +20,8 @@ export default function App() {
         <Route exact path = "/" component={WelcomeScene} />
         <Route exact path = "/login" component={LoginScene} />
         <Route exact path = "/signup" component={SignupScene} />
-        <Route exact path = "/home" component={HomeScene} />
         <Route exact path = '/reset' component={PasswordResetScene}/>
+        <Route exact path = '/home' component={HomeScene} />
       </Switch>
       
     </NativeRouter>

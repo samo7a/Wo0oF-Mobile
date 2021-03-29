@@ -26,10 +26,8 @@ const LoginScene = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isOwner, setIsOwner] = useState(false);
-    const [visible, setVisible] = useState(false);
 
     const loginHandler = () => {
-       setVisible(false);
        const json = {
         Email: email,
         Password: password, 
@@ -44,12 +42,12 @@ const LoginScene = () => {
                 id : userId,
             }
             storage.save(userObject);
-            history.push('/home');
         }
       })
       .catch(function (error) {
         console.warn(error);
       });
+      history.push('/home');
     }
     return (
         <SafeAreaView>
