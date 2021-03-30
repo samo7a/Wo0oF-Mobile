@@ -47,7 +47,12 @@ const LoginScene = () => {
       .catch(function (error) {
         console.warn(error);
       });
-      history.push('/home');
+      if (isOwner){
+        history.push('/ownerHome');
+      } else {
+          history.push('adaptorHome');
+      }
+      
     }
     return (
         <SafeAreaView>

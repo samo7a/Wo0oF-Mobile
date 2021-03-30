@@ -9,8 +9,9 @@ import {NativeRouter, Switch, Route} from 'react-router-native';
 import WelcomeScene from './src/scenes/WelcomeScene';
 import LoginScene from './src/scenes/LoginScene';
 import SignupScene from './src/scenes/SignupScene';
-import HomeScene from './src/scenes/HomeScene';
 import PasswordResetScene from './src/scenes/PasswordResetScene';
+import HomeSceneAdaptor from './src/scenes/HomeSceneAdaptor';
+import HomeSceneOwner from './src/scenes/HomeSceneOwner';
 
 
 export default function App() {
@@ -21,7 +22,8 @@ export default function App() {
         <Route exact path = "/login" component={LoginScene} />
         <Route exact path = "/signup" component={SignupScene} />
         <Route exact path = '/reset' component={PasswordResetScene}/>
-        <Route exact path = '/home' component={HomeScene} />
+        <Route exact path = '/ownerHome' component={HomeSceneOwner} />
+        <Route exact path = '/adaptorHome' component={HomeSceneAdaptor} />
       </Switch>
       
     </NativeRouter>
