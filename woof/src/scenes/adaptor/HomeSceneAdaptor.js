@@ -4,7 +4,9 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import MIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import  ChatScene from '../ChatScene';
+
+import ChatStack from '../chat/ChatStack';
+import  ChatScene from '../chat/ChatScene';
 import BrowseAdaptor from './BrowseAdaptor';
 import Profile from './ProfileAdaptor';
 
@@ -54,7 +56,7 @@ const HomeSceneAdaptor = () => {
             />
         <Tab.Screen 
             name="Chats"   
-            component={ChatScene}
+            component={ChatStack}
             options={
               { 
                 tabBarBadge: noOfMessages == 0 ? null : noOfMessages

@@ -6,7 +6,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Button, Text} from 'native-base';
 
-import  ChatScene from '../ChatScene';
+import  ChatScene from '../chat/ChatScene';
 
 
 
