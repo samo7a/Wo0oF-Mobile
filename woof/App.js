@@ -10,8 +10,8 @@ import WelcomeScene from './src/scenes/WelcomeScene';
 import LoginScene from './src/scenes/LoginScene';
 import SignupScene from './src/scenes/SignupScene';
 import PasswordResetScene from './src/scenes/PasswordResetScene';
-import HomeSceneAdaptor from './src/scenes/HomeSceneAdaptor';
-import HomeSceneOwner from './src/scenes/HomeSceneOwner';
+import HomeSceneAdaptor from './src/scenes/adaptor/HomeSceneAdaptor';
+import HomeSceneOwner from './src/scenes/owner/HomeSceneOwner';
 
 
 export default function App() {

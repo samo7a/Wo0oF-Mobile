@@ -50,7 +50,7 @@ const LoginScene = () => {
       if (isOwner){
         history.push('/ownerHome');
       } else {
-          history.push('adaptorHome');
+          history.push('/adaptorHome');
       }
       
     }
