@@ -142,6 +142,15 @@ const GlobalStyles = StyleSheet.create({
         justifyContent : 'space-evenly',
 
         
+    },
+    chatItem : {
+        margin : 12,
+        borderColor : '#2B2D42',
+        padding : 12,
+        borderWidth : 1,
+        borderRadius : 10,
+        backgroundColor : '#8D99AE',
+
     }
 });
 export default GlobalStyles;

@@ -1,5 +1,5 @@
-import React, { useState, useCallback, useEffect } from 'react'
-import { GiftedChat } from 'react-native-gifted-chat'
+import React, { useState, useCallback, useEffect } from 'react';
+import { GiftedChat } from 'react-native-gifted-chat';
 
 const ChatScene = ({ route, navigation }) => {
   const [messages, setMessages] = useState([]);

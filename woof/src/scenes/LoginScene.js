@@ -10,6 +10,7 @@ import { StyleSheet,
         TouchableOpacity, 
         TextInput,
         KeyboardAvoidingView,
+        ActivityIndicator
     } from 'react-native';
 import { useHistory} from "react-router-native";
 import LinearGradient from 'react-native-linear-gradient';
@@ -17,42 +18,70 @@ import BouncyCheckbox from 'react-native-bouncy-checkbox';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import logo from '../images/logo.png';
 import styles from '../../styles/GlobalStyles';
-import axios from '../utilities/axios';
+import Axios , {setClientToken}from '../utilities/axios';
+import jwt_decode from 'jwt-decode';
+
+
+
 const storage = require('../utilities/TokenStorage');
+
 
 const LoginScene = () => {
     const history = useHistory();
-    
+    const [isLoading, setIsLoading] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isOwner, setIsOwner] = useState(false);
 
-    const loginHandler = () => {
-       const json = {
-        Email: email,
-        Password: password, 
-        isOwner : isOwner,
-       }
-       axios.post('/api/loginUser', json)
-      .then(function (response) {
-        console.warn(response);
-        if (response != null) {
-            let userId = response.id;
-            let userObject = {
-                id : userId,
-            }
-            storage.save(userObject);
-        }
-      })
-      .catch(function (error) {
-        console.warn(error);
-      });
-      if (isOwner){
-        history.push('/ownerHome');
-      } else {
-          history.push('/adaptorHome');
-      }
+    const loginHandler = async (event) => {
+        event.preventDefault();
+        setIsLoading(true);
+        const json = {
+            Email: email,
+            Password: password,
+        };
+        
+        const onSuccess = ({data}) => {
+            // Set JSON Web Token on success
+            var res = response.data;
+            setClientToken(data);
+            storage.save(json);
+            if (isOwner){
+                history.push('/ownerHome');
+              } else {
+                  history.push('/adaptorHome');
+              }
+            console.log(data.msg);
+          };
       
+          const onFailure = error => {
+            console.log(error);
+          };
+        Axios.post('/login', json)
+        .then(function (response) {
+            var res = response.data.accessToken;
+            
+            var ud = jwt_decode(res,{complete:true});
+            console.log(ud.userId);
+            //console.log(response.data.accessToken);
+            if (res.error) {
+              console.log(res);
+              history.push('/login');
+              // window.location.href = "/";
+            } else {
+                storage.save(response);
+                console.log(storage.load());
+                console.log(response.accessToken);
+              //storage.storeToken(res);
+              if (isOwner){
+                history.push('/ownerHome');
+              } else {
+                  history.push('/adaptorHome');
+              }
+              //window.location.href = "/home";
+            }
+          })
+        .catch(onFailure);
     }
     return (
         <SafeAreaView>
