@@ -23,6 +23,7 @@ import jwt_decode from 'jwt-decode';
 
 
 
+
 const storage = require('../utilities/TokenStorage');
 
 
@@ -41,37 +42,27 @@ const LoginScene = () => {
             Password: password,
         };
         
-        const onSuccess = ({data}) => {
-            // Set JSON Web Token on success
-            var res = response.data;
-            setClientToken(data);
-            storage.save(json);
-            if (isOwner){
-                history.push('/ownerHome');
-              } else {
-                  history.push('/adaptorHome');
-              }
-            console.log(data.msg);
-          };
-      
           const onFailure = error => {
             console.log(error);
           };
-        Axios.post('/login', json)
+        await Axios.post('/login', json)
         .then(function (response) {
             var res = response.data.accessToken;
             
             var ud = jwt_decode(res,{complete:true});
             console.log(ud.userId);
+            console.log(ud.firstName);
+            console.log(ud.lastName);
+            console.log(ud.isOwner);
             //console.log(response.data.accessToken);
             if (res.error) {
-              console.log(res);
+              console.log(res.error);
               history.push('/login');
               // window.location.href = "/";
             } else {
-                storage.save(response);
-                console.log(storage.load());
-                console.log(response.accessToken);
+                storage.save(res);
+                setClientToken(res);
+                console.log(res);
               //storage.storeToken(res);
               if (isOwner){
                 history.push('/ownerHome');
