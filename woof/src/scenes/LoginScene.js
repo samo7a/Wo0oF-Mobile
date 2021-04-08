@@ -50,10 +50,8 @@ const LoginScene = () => {
             var res = response.data.accessToken;
             
             var ud = jwt_decode(res,{complete:true});
-            console.log(ud.userId);
-            console.log(ud.firstName);
-            console.log(ud.lastName);
-            console.log(ud.isOwner);
+            console.log(ud);
+
             //console.log(response.data.accessToken);
             if (res.error) {
               console.log(res.error);
