@@ -3,15 +3,9 @@ import { StyleSheet, View} from 'react-native';
 
 import SplashScene from './SplashScreen';
 import LoginScene from './LoginScene';
-import HomeAdaptor from './adaptor/HomeSceneAdaptor';
-import HomeOwner from './owner/HomeSceneOwner';
-import storage from '../utilities/TokenStorage';
-import jwt_decode from 'jwt-decode';
-import { useHistory } from 'react-router';
 
 
 const WelcomeScene = () => {
-    const history = useHistory();
     const [isVisible, setIsVisible] = useState(true);
     
     useEffect(() => {
