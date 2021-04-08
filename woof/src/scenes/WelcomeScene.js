@@ -13,30 +13,20 @@ import { useHistory } from 'react-router';
 const WelcomeScene = () => {
     const history = useHistory();
     const [isVisible, setIsVisible] = useState(true);
-    const [token, setToken] = useState(null);
+    
     useEffect(() => {
-        async function getToken() {
-            await storage.load().then(data => setToken(data)).catch(e => console.log.error);
-            if (token !== null){
-                let obj = jwt_decode(token, {complete:true});
-                console.log(obj);
-                if (obj.isOwner){
-                    history.push('/ownerHome')
-                }
-                else {
-                    history.push('/adaptorHome');
-                }
-            } else {
-                setIsVisible(false);
-            }
-        }
-        getToken();
+        setTimeout(()=> {
+            setIsVisible(false);
+        }, 2795);
     }, []);
+
     return (
         <View>
             {isVisible ? <SplashScene /> : <LoginScene />} 
         </View> 
     );
+    
+    
 }
 
 const styles = StyleSheet.create({

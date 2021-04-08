@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { StyleSheet,
         Text, 
         View, 
@@ -28,15 +28,31 @@ const storage = require('../utilities/TokenStorage');
 
 
 const LoginScene = () => {
+    useEffect(() => {
+        async function checkLogin() {
+            const bol = await storage.load('isLoggedIn');
+            if (bol === true){
+                const token = await storage.load('accessToken');
+                const obj = jwt_decode(token, {complete:true});
+                if (obj.isOwner === true) {
+                    history.push('/ownerHome');
+                }
+                else {
+                    history.push('/adaptorHome');
+                }
+            }
+        }
+        checkLogin();
+    }, [])
     const history = useHistory();
-    const [isLoading, setIsLoading] = useState(false);
+    //const [isLoading, setIsLoading] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isOwner, setIsOwner] = useState(false);
 
     const loginHandler = async (event) => {
         event.preventDefault();
-        setIsLoading(true);
+        //setIsLoading(true);
         const json = {
             Email: email,
             Password: password,
@@ -58,9 +74,10 @@ const LoginScene = () => {
               history.push('/login');
               // window.location.href = "/";
             } else {
-                storage.save(res);
+                storage.save('accessToken', res);
+                storage.save('isLoggedIn', true);
                 setClientToken(res);
-                console.log(res);
+                //console.log(res);
               //storage.storeToken(res);
               if (isOwner){
                 history.push('/ownerHome');

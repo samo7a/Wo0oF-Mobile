@@ -1,8 +1,7 @@
 import { StyleSheet} from 'react-native';
 import 'react-native-gesture-handler';
 import React from 'react';
-import StackNavigator from './StackNavigator';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+
 import {NativeRouter, Switch, Route} from 'react-router-native';
 
 
@@ -15,6 +14,7 @@ import HomeSceneOwner from './src/scenes/owner/HomeSceneOwner';
 
 
 export default function App() {
+  
   return (
     <NativeRouter>
       <Switch>

@@ -1,9 +1,14 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {StyleSheet, View, Image, ActivityIndicator} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import SplashScreen1 from 'react-native-splash-screen'
 
 const logo = require('../images/logo.png');
+
 const SplashScreen = () => {
+  useEffect(() => {
+    SplashScreen1.hide();
+  }, [])
     return (
         <LinearGradient colors={['#8D99AE','#EDF2F4']} style={styles.container}>
             <View style={styles.view}>
