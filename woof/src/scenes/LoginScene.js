@@ -30,11 +30,15 @@ const storage = require('../utilities/TokenStorage');
 const LoginScene = () => {
     
     useEffect( () => {
-         function checkLogin() {
-            const bol =  storage.load('isLoggedIn');
+         async function checkLogin() {
+            console.log("Hello from use Effect");
+            const bol =  await storage.load('isLoggedIn');
+            console.log(bol);
             if (bol === 'true') {
-                const token =  storage.load('accessToken');
+                console.log("It was ture");
+                const token =  await storage.load('accessToken');
                 const obj = jwt_decode(token, { complete: true });
+                console.log(obj);
                 if (obj.isOwner === true) {
                     history.push('/ownerHome');
                 }
@@ -68,7 +72,7 @@ const LoginScene = () => {
             console.log('wird erreo about var');
           };
         await Axios.post('/login', json)
-        .then(function (response) {
+        .then(async function (response) {
             var res = response.data.accessToken;
             console.log("accessToken: ****" + res);
             var ud = jwt_decode(res,{complete:true});
@@ -81,8 +85,8 @@ const LoginScene = () => {
                 storage.save('accessToken', JSON.stringify(res));
                 storage.save('isLoggedIn', 'true');
                 setClientToken(res);
-                const tok = storage.load('accessToken');
-                const tok2 = storage.load('isLoggedIn');
+                const tok = await storage.load('accessToken');
+                const tok2 = await storage.load('isLoggedIn');
                 console.log("FROM LOGIN HANDEL++" + tok);
                 console.log("FROM LOGIN HANDEL++" + tok2);
               if (isOwner){

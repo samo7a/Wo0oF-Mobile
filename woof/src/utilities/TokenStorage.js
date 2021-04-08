@@ -31,17 +31,17 @@
 
 import * as SecureStore from 'expo-secure-store';
 
-export  function save(key, value) {
+export async function save(key, value) {
   try{
-    let result =  SecureStore.setItemAsync(key, value);
+    let result = await SecureStore.setItemAsync(key, value);
     return result;
   } catch (e) {
     return e;
   }
 }
 
-export  function load(key) {
-  let result =  SecureStore.getItemAsync(key);
+export async function load(key) {
+  let result = await SecureStore.getItemAsync(key);
   if (result) {
     return result;
   } else {
@@ -50,9 +50,9 @@ export  function load(key) {
   }
 }
 
-export  function remove(key) {
+export async function remove(key) {
   try {
-    return  SecureStore.deleteItemAsync(key);
+    return await SecureStore.deleteItemAsync(key, null);
   }
   catch (e){
     return null;
