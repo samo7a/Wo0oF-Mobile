@@ -1,17 +1,14 @@
 import React, { useState, useEffect } from "react";
 import {
-  StyleSheet,
   Text,
   View,
   Image,
   TouchableWithoutFeedback,
   Keyboard,
   SafeAreaView,
-  Modal,
   TouchableOpacity,
   TextInput,
   KeyboardAvoidingView,
-  ActivityIndicator,
 } from "react-native";
 import { useHistory } from "react-router-native";
 import LinearGradient from "react-native-linear-gradient";
@@ -83,9 +80,7 @@ const LoginScene = () => {
       })
       .catch(onFailure);
   };
-  if (isLoading) {
-    return <Loader isLoading={isLoading} />;
-  }
+
   return (
     <SafeAreaView>
       <LinearGradient
@@ -172,6 +167,8 @@ const LoginScene = () => {
             </KeyboardAvoidingView>
           </View>
         </TouchableWithoutFeedback>
+
+        <Loader isLoading={isLoading} />
       </LinearGradient>
     </SafeAreaView>
   );
