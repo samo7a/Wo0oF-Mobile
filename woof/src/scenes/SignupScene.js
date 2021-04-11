@@ -16,12 +16,8 @@ import LinearGradient from "react-native-linear-gradient";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import Icon from "react-native-vector-icons/FontAwesome";
 import logo from "../images/logo.png";
-import defaultProfilePic from "../images/default-profile-with-dog.png";
 import styles from "../../styles/GlobalStyles";
 import Axios from "../utilities/axios";
-import * as ImagePicker from "react-native-image-picker";
-
-import axios from "../utilities/axios";
 const storage = require("../utilities/TokenStorage");
 
 const SignupScene = () => {
@@ -31,52 +27,41 @@ const SignupScene = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isOwner, setIsOwner] = useState(false);
-  const [visible, setVisible] = useState(false);
-  const [profilePic, setProfilePic] = useState(defaultProfilePic);
-  const [address, setAddress] = useState("");
-  const [bio, setBio] = useState("");
+  // const [visible, setVisible] = useState(false); //for a future modal (email verification)
 
-  const signupHandler = () => {
-    setVisible(false);
+  const showAlert = (title, msg) =>
+    Alert.alert(
+      title,
+      msg,
+      [
+        {
+          text: "OK",
+          onPress: () => {},
+        },
+      ],
+      {
+        cancelable: true,
+        onDismiss: () => {},
+      }
+    );
+  const signupHandler = async () => {
+    //setVisible(false);
     const json = {
       Email: email,
       Password: password,
-      Location: address,
       FirstName: firstName,
       LastName: lastName,
       isOwner: isOwner,
-      ProfilePicture: profilePic,
-      ShortBio: bio,
     };
-    axios
-      .post("/registerUser", json)
-      .then(function (response) {
-        console.warn(response);
+
+    await Axios.post("/signup", json)
+      .then(async function (response) {
+        showAlert(null, JSON.stringify(response.data.msg));
       })
       .catch(function (error) {
-        console.warn(error);
+        showAlert(null, JSON.stringify(error));
       });
     history.push("/login");
-  };
-  const showModal = () => {
-    setVisible(true);
-  };
-  const hideModal = () => {
-    setVisible(false);
-  };
-  const choosePhoto = () => {
-    const options = {
-      noData: true,
-      mediaType: "photo",
-    };
-    ImagePicker.launchImageLibrary(options, (response) => {
-      if (response.uri) {
-        setProfilePic(response);
-      }
-    });
-  };
-  const removePhoto = () => {
-    setProfilePic(defaultProfilePic);
   };
 
   return (
@@ -118,6 +103,7 @@ const SignupScene = () => {
                   value={email}
                   backgroundColor="white"
                   keyboardType="email-address"
+                  autoCapitalize="none"
                 />
 
                 <Text style={styles.text}>Password</Text>

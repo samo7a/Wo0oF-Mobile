@@ -43,7 +43,7 @@ const PasswordResetScene = () => {
         const json = {
             Email: email
            }
-           axios.post('/api/resetpassword', json)
+           axios.post('/resetpassword', json)
           .then(function (response) {
             console.warn(response);
             if (response != null) {

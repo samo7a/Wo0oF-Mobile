@@ -20,7 +20,7 @@ import Axios, { setClientToken } from "../utilities/axios";
 import jwt_decode from "jwt-decode";
 import Loader from "../components/Loader";
 
-const storage = require("../utilities/TokenStorage");
+const Storage = require("../utilities/TokenStorage");
 
 const LoginScene = () => {
   const history = useHistory();
@@ -32,9 +32,9 @@ const LoginScene = () => {
   useEffect(() => {
     async function checkLogin() {
       setIsLoading(true);
-      const bol = await storage.load("isLoggedIn");
+      const bol = await Storage.load("isLoggedIn");
       if (bol === "true") {
-        const token = await storage.load("accessToken");
+        const token = await Storage.load("accessToken");
         const obj = jwt_decode(token, { complete: true });
         if (obj.isOwner === true) {
           history.push("/ownerHome");
@@ -68,8 +68,8 @@ const LoginScene = () => {
         if (res.error) {
           setIsLoading(false);
         } else {
-          storage.save("accessToken", JSON.stringify(res));
-          storage.save("isLoggedIn", "true");
+          Storage.save("accessToken", JSON.stringify(res));
+          Storage.save("isLoggedIn", "true");
           setClientToken(res);
           if (isOwner) {
             history.push("/ownerHome");
