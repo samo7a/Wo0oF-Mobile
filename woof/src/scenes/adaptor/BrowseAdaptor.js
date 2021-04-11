@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import {
   Container,
   Header,
@@ -23,9 +23,7 @@ const BrowseAdaptor = () => {
     catch (e) {
       alert(e);
     }
-    
     history.push("/login");
-    
   }
 
   return (

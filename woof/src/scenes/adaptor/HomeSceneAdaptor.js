@@ -8,7 +8,7 @@ import MIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ChatStack from '../chat/ChatStack';
 import  ChatScene from '../chat/ChatScene';
 import BrowseAdaptor from './BrowseAdaptor';
-import Profile from './ProfileAdaptor';
+import Profile from '../Profile';
 
 
 
