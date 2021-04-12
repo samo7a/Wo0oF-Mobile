@@ -71,7 +71,8 @@ const LoginScene = () => {
           Storage.save("accessToken", JSON.stringify(res));
           Storage.save("isLoggedIn", "true");
           setClientToken(res);
-          if (isOwner) {
+          const obj = jwt_decode(res, { complete: true });
+          if (obj.isOwner) {
             history.push("/ownerHome");
           } else {
             history.push("/adaptorHome");
@@ -113,7 +114,7 @@ const LoginScene = () => {
                   textContentType="password"
                   keyboardType="default"
                 />
-                <BouncyCheckbox
+                {/* <BouncyCheckbox
                   size={25}
                   fillColor="red"
                   unfillColor="#FFFFFF"
@@ -124,7 +125,7 @@ const LoginScene = () => {
                     setIsOwner(!isOwner);
                   }}
                   style={styles.checkbox}
-                />
+                /> */}
                 <TouchableOpacity onPress={loginHandler}>
                   <View style={styles.primaryButton}>
                     <Text

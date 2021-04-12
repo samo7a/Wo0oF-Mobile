@@ -1,21 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
-  StyleSheet,
   Text,
   View,
   Image,
   TouchableWithoutFeedback,
   Keyboard,
   SafeAreaView,
-  Alert,
-  Modal,
   TouchableOpacity,
   TextInput,
   KeyboardAvoidingView,
-  ActivityIndicator,
   ScrollView,
 } from "react-native";
-import KeyboardAwareScrollView from "react-native-keyboard-aware-scroll-view";
 import { useHistory } from "react-router-native";
 import LinearGradient from "react-native-linear-gradient";
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -32,7 +27,6 @@ const Storage = require("../utilities/TokenStorage");
 const Profile = () => {
   const firstNameRef = useRef();
   const lastNameRef = useRef();
-  const emailRef = useRef();
   const phoneRef = useRef();
   const addressRef = useRef();
   const bioRef = useRef();
@@ -44,7 +38,7 @@ const Profile = () => {
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [bio, setBio] = useState("");
-
+  const [, setIsOwner] = useState();
   const history = useHistory();
   const [editmode, setEditmode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -61,6 +55,7 @@ const Profile = () => {
         setLastName(data.lastName);
         setPhone(data.phone);
         setEmail(data.email);
+        setIsOwner(data.isOwner);
         //console.log(data);
       } catch (e) {
         console.warn(e);
@@ -110,10 +105,12 @@ const Profile = () => {
       UserId: id,
       FirstName: firstName,
       LastName: lastName,
-      Phone: phone,
       Location: address,
+      Phone: phone,
+      ProfilePicture: null,
       ShortBio: bio,
     };
+    console.log("make sure I am sending a boolean  " + JSON.stringify(json));
     await Axios.post("/editUser", json)
       .then(async function (response) {
         var token = response.data.accessToken;
@@ -218,7 +215,7 @@ const Profile = () => {
                 <Text style={styles.text}>Last Name</Text>
                 <TextInput
                   ref={lastNameRef}
-                  onSubmitEditing={() => emailRef.current.focus()}
+                  onSubmitEditing={() => phoneRef.current.focus()}
                   editable={editmode}
                   style={styles.inputText}
                   placeholder="Last Name"
@@ -230,9 +227,7 @@ const Profile = () => {
                 {/* Email */}
                 <Text style={styles.text}>Email</Text>
                 <TextInput
-                  ref={emailRef}
-                  onSubmitEditing={() => phoneRef.current.focus()}
-                  editable={editmode}
+                  editable={false}
                   style={styles.inputText}
                   placeholder="Email"
                   onChangeText={(e) => setEmail(e)}

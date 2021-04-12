@@ -12,7 +12,7 @@ import Profile from "../Profile";
 const Tab = createBottomTabNavigator();
 
 const HomeSceneOwner = () => {
-  const [noOfMessages, setNoOfMessages] = useState(3);
+  const [noOfMessages, ] = useState(3);
   return (
     <NavigationContainer>
       <Tab.Navigator
@@ -29,8 +29,8 @@ const HomeSceneOwner = () => {
                 : "account-settings-outline";
               return <MIcon name={iconName} size={size} color={color} />;
             } else if (route.name === "Browse") {
-              iconName = focused ? "dog" : "ios-paw-outline";
-              return <IonIcon name={iconName} size={size} color={color} />;
+              iconName = focused ? "dog-side" : "dog-service";
+              return <MIcon name={iconName} size={size} color={color} />;
             } else if (route.name === "Chats") {
               iconName = focused ? "chatbubble" : "chatbubble-outline";
               return <IonIcon name={iconName} size={size} color={color} />;
@@ -43,7 +43,7 @@ const HomeSceneOwner = () => {
         }}
       >
         <Tab.Screen name="Profile" component={Profile} />
-        <Tab.Screen name="Browse" title="Dogs" component={DogManager} />
+        <Tab.Screen name="Browse"  component={DogManager} />
         <Tab.Screen
           name="Chats"
           component={ChatStack}
