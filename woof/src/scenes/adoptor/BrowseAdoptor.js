@@ -12,7 +12,7 @@ import { View, Button } from "react-native";
 import { useHistory } from "react-router";
 const Storage = require("../../utilities/TokenStorage");
 
-const BrowseAdaptor = () => {
+const BrowseAdoptor = () => {
   const history = useHistory();
 
   const logout = async () => {
@@ -34,4 +34,4 @@ const BrowseAdaptor = () => {
   );
 };
 
-export default BrowseAdaptor;
+export default BrowseAdoptor;

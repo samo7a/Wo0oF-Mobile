@@ -6,12 +6,12 @@ import IonIcon from "react-native-vector-icons/Ionicons";
 import MIcon from "react-native-vector-icons/MaterialCommunityIcons";
 
 import ChatStack from "../chat/ChatStack";
-import BrowseAdaptor from "./BrowseAdaptor";
+import BrowseAdoptor from "./BrowseAdoptor";
 import Profile from "../Profile";
 
 const Tab = createBottomTabNavigator();
 
-const HomeSceneAdaptor = () => {
+const HomeSceneAdoptor = () => {
   const [noOfMessages] = useState(3);
   return (
     <NavigationContainer>
@@ -43,7 +43,7 @@ const HomeSceneAdaptor = () => {
         }}
       >
         <Tab.Screen name="Profile" component={Profile} />
-        <Tab.Screen name="Browse" title="Dogs" component={BrowseAdaptor} />
+        <Tab.Screen name="Browse" title="Dogs" component={BrowseAdoptor} />
         <Tab.Screen
           name="Chats"
           component={ChatStack}
@@ -56,4 +56,4 @@ const HomeSceneAdaptor = () => {
   );
 };
 
-export default HomeSceneAdaptor;
+export default HomeSceneAdoptor;
