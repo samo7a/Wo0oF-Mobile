@@ -18,7 +18,7 @@ import Icon2 from "react-native-vector-icons/SimpleLineIcons";
 import Icon3 from "react-native-vector-icons/MaterialCommunityIcons";
 import defaultProfilePic from "../images/default-profile-with-dog.png";
 import styles from "../../styles/GlobalStyles";
-import Axios from "../utilities/axios";
+import Axios, { setClientToken } from "../utilities/axios";
 import * as ImagePicker from "react-native-image-picker";
 import jwt_decode from "jwt-decode";
 import Loader from "../components/Loader";
@@ -30,6 +30,7 @@ const Profile = () => {
   const phoneRef = useRef();
   const addressRef = useRef();
   const bioRef = useRef();
+
   const [id, setId] = useState("");
   const [profilePic, setProfilePic] = useState(defaultProfilePic);
   const [firstName, setFirstName] = useState("");
@@ -38,7 +39,7 @@ const Profile = () => {
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [bio, setBio] = useState("");
-  const [, setIsOwner] = useState();
+  const [isOwner, setIsOwner] = useState();
   const history = useHistory();
   const [editmode, setEditmode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -56,7 +57,7 @@ const Profile = () => {
         setPhone(data.phone);
         setEmail(data.email);
         setIsOwner(data.isOwner);
-        //console.log(data);
+        console.log(data);
       } catch (e) {
         console.warn(e);
       }
@@ -99,17 +100,21 @@ const Profile = () => {
   const editProfile = () => {
     setEditmode(true);
   };
-  const submit = async () => {
+
+  const submit = async (event) => {
+    event.preventDefault();
     setIsLoading(true);
+
     const json = {
-      UserId: id,
+      UserID: id,
       FirstName: firstName,
       LastName: lastName,
       Location: address,
       Phone: phone,
-      ProfilePicture: null,
+      ProfilePicture: " my profile pic",
       ShortBio: bio,
     };
+
     console.log("make sure I am sending a boolean  " + JSON.stringify(json));
     await Axios.post("/editUser", json)
       .then(async function (response) {
@@ -204,8 +209,12 @@ const Profile = () => {
                   ref={firstNameRef}
                   onSubmitEditing={() => lastNameRef.current.focus()}
                   editable={editmode}
-                  style={styles.inputText}
+                  style={[
+                    styles.inputText,
+                    { color: editmode ? "#2B2D42" : "black" },
+                  ]}
                   placeholder="First Name"
+                  placeHolderTextColor={editmode ? "#2B2D42" : "black"}
                   onChangeText={(e) => setFirstName(e)}
                   value={firstName}
                   backgroundColor="white"
@@ -217,8 +226,12 @@ const Profile = () => {
                   ref={lastNameRef}
                   onSubmitEditing={() => phoneRef.current.focus()}
                   editable={editmode}
-                  style={styles.inputText}
+                  style={[
+                    styles.inputText,
+                    { color: editmode ? "#2B2D42" : "black" },
+                  ]}
                   placeholder="Last Name"
+                  placeHolderTextColor={editmode ? "#2B2D42" : "black"}
                   onChangeText={(e) => setLastName(e)}
                   value={lastName}
                   backgroundColor="white"
@@ -228,8 +241,12 @@ const Profile = () => {
                 <Text style={styles.text}>Email</Text>
                 <TextInput
                   editable={false}
-                  style={styles.inputText}
+                  style={[
+                    styles.inputText,
+                    { color: editmode ? "#2B2D42" : "black" },
+                  ]}
                   placeholder="Email"
+                  placeHolderTextColor={editmode ? "#2B2D42" : "black"}
                   onChangeText={(e) => setEmail(e)}
                   value={email}
                   backgroundColor="white"
@@ -241,8 +258,12 @@ const Profile = () => {
                   ref={phoneRef}
                   onSubmitEditing={() => addressRef.current.focus()}
                   editable={editmode}
-                  style={styles.inputText}
+                  style={[
+                    styles.inputText,
+                    { color: editmode ? "#2B2D42" : "black" },
+                  ]}
                   placeholder="Phone Number"
+                  placeHolderTextColor={editmode ? "#2B2D42" : "black"}
                   onChangeText={(e) => setPhone(e)}
                   value={phone}
                   backgroundColor="white"
@@ -254,8 +275,12 @@ const Profile = () => {
                   ref={addressRef}
                   onSubmitEditing={() => bioRef.current.focus()}
                   editable={editmode}
-                  style={styles.inputText}
+                  style={[
+                    styles.inputText,
+                    { color: editmode ? "#2B2D42" : "black" },
+                  ]}
                   placeholder="Address"
+                  placeHolderTextColor={editmode ? "#2B2D42" : "black"}
                   onChangeText={(e) => setAddress(e)}
                   value={address}
                   backgroundColor="white"
@@ -266,8 +291,12 @@ const Profile = () => {
                 <TextInput
                   ref={bioRef}
                   editable={editmode}
-                  style={styles.inputbio}
+                  style={[
+                    styles.inputbio,
+                    { color: editmode ? "#2B2D42" : "black" },
+                  ]}
                   placeholder="Bio..."
+                  placeHolderTextColor={editmode ? "#2B2D42" : "black"}
                   onChangeText={(e) => setBio(e)}
                   value={bio}
                   backgroundColor="white"

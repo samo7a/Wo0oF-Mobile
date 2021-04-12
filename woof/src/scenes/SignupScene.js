@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   Text,
   View,
@@ -22,6 +22,11 @@ const storage = require("../utilities/TokenStorage");
 
 const SignupScene = () => {
   const history = useHistory();
+  const firstNameRef = useRef();
+  const lastNameRef = useRef();
+  const emailRef = useRef();
+  const passwordRef = useRef();
+
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -77,6 +82,8 @@ const SignupScene = () => {
               <View style={styles.form}>
                 <Text style={styles.text}>First Name</Text>
                 <TextInput
+                  ref={firstNameRef}
+                  onSubmitEditing={() => lastNameRef.current.focus()}
                   style={styles.inputText}
                   placeholder="First Name"
                   onChangeText={(e) => setFirstName(e)}
@@ -87,6 +94,8 @@ const SignupScene = () => {
 
                 <Text style={styles.text}>Last Name</Text>
                 <TextInput
+                  ref={lastNameRef}
+                  onSubmitEditing={() => emailRef.current.focus()}
                   style={styles.inputText}
                   placeholder="Last Name"
                   onChangeText={(e) => setLastName(e)}
@@ -97,6 +106,8 @@ const SignupScene = () => {
 
                 <Text style={styles.text}>Email</Text>
                 <TextInput
+                  ref={emailRef}
+                  onSubmitEditing={() => passwordRef.current.focus()}
                   style={styles.inputText}
                   placeholder="Email"
                   onChangeText={(e) => setEmail(e)}
@@ -108,6 +119,7 @@ const SignupScene = () => {
 
                 <Text style={styles.text}>Password</Text>
                 <TextInput
+                  ref={passwordRef}
                   style={styles.inputText}
                   placeholder="Password"
                   onChangeText={(e) => setPassword(e)}

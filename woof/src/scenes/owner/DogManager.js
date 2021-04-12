@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   StyleSheet,
   SafeAreaView,
-  ScrollView,
 } from "react-native";
 import Icon from "react-native-vector-icons/AntDesign";
 

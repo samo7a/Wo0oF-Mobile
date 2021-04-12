@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Text,
   View,
@@ -12,7 +12,6 @@ import {
 } from "react-native";
 import { useHistory } from "react-router-native";
 import LinearGradient from "react-native-linear-gradient";
-import BouncyCheckbox from "react-native-bouncy-checkbox";
 import Icon from "react-native-vector-icons/FontAwesome";
 import logo from "../images/logo.png";
 import styles from "../../styles/GlobalStyles";
@@ -24,10 +23,12 @@ const Storage = require("../utilities/TokenStorage");
 
 const LoginScene = () => {
   const history = useHistory();
+  const emailRef = useRef();
+  const passwordRef = useRef();
   const [isLoading, setIsLoading] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isOwner, setIsOwner] = useState(false);
+ 
 
   useEffect(() => {
     async function checkLogin() {
@@ -95,6 +96,10 @@ const LoginScene = () => {
               <View style={styles.form}>
                 <Text style={styles.text}>Email</Text>
                 <TextInput
+                  ref={emailRef}
+                  onSubmitEditing={() => {
+                    passwordRef.current.focus();
+                  }}
                   style={styles.inputText}
                   placeholder="Email"
                   onChangeText={(e) => setEmail(e)}
@@ -105,6 +110,7 @@ const LoginScene = () => {
                 />
                 <Text style={styles.text}>Password</Text>
                 <TextInput
+                  ref={passwordRef}
                   style={styles.inputText}
                   placeholder="Password"
                   onChangeText={(e) => setPassword(e)}
@@ -114,18 +120,7 @@ const LoginScene = () => {
                   textContentType="password"
                   keyboardType="default"
                 />
-                {/* <BouncyCheckbox
-                  size={25}
-                  fillColor="red"
-                  unfillColor="#FFFFFF"
-                  text="Are you a dog owner?"
-                  iconStyle={{ borderColor: "red" }}
-                  textStyle={{ textDecorationLine: "none" }}
-                  onPress={() => {
-                    setIsOwner(!isOwner);
-                  }}
-                  style={styles.checkbox}
-                /> */}
+                
                 <TouchableOpacity onPress={loginHandler}>
                   <View style={styles.primaryButton}>
                     <Text
