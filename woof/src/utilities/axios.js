@@ -1,6 +1,6 @@
 import axios from "axios";
 
-let Axios = axios.create({
+const Axios = axios.create({
   baseURL: "https://wo0of.herokuapp.com",
   // baseURL: 'http://192.168.0.9:5000/',
 });
