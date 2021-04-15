@@ -2,106 +2,374 @@ import React, { useState } from "react";
 import {
   View,
   Text,
-  FlatList,
-  TouchableOpacity,
   StyleSheet,
-  SafeAreaView,
+  Animated,
+  TouchableHighlight,
+  TouchableOpacity,
 } from "react-native";
-import Icon from "react-native-vector-icons/AntDesign";
+import LinearGradient from "react-native-linear-gradient";
+import { SwipeListView } from "react-native-swipe-list-view";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import AddDog from "../../components/AddDog";
+import EditDog from "../../components/EditDog";
 
+const myDogs = [
+  {
+    key: 1,
+    name: "Max",
+    sex: "M",
+    breed: "rare",
+    weight: 20,
+    height: 10,
+    bio: "good dog",
+  },
+  {
+    key: 2,
+    name: "Lana",
+    sex: "F",
+    breed: "rare",
+    weight: 20,
+    height: 10,
+    bio: "good dog",
+  },
+  {
+    key: 3,
+    name: "Sisi",
+    sex: "F",
+    breed: "rare",
+    weight: 20,
+    height: 10,
+    bio: "good dog",
+  },
+  {
+    key: 4,
+    name: "Rex",
+    sex: "M",
+    breed: "rare",
+    weight: 20,
+    height: 10,
+    bio: "good dog",
+  },
+  {
+    key: 5,
+    name: "Roy",
+    sex: "M",
+    breed: "rare",
+    weight: 20,
+    height: 10,
+    bio: "good dog",
+  },
+];
 const DogManager = () => {
-  const [array, setArray] = useState(myDogs);
-  const myDogs = [
-    {
-      key: 1,
-      name: "Max",
-      sex: "M",
-      breed: "rare",
-      weight: 20,
-      height: 10,
-      bio: "good dog",
-    },
-    {
-      key: 2,
-      name: "Lana",
-      sex: "F",
-      breed: "rare",
-      weight: 20,
-      height: 10,
-      bio: "good dog",
-    },
-    {
-      key: 3,
-      name: "Sisi",
-      sex: "F",
-      breed: "rare",
-      weight: 20,
-      height: 10,
-      bio: "good dog",
-    },
-    {
-      key: 4,
-      name: "Rex",
-      sex: "M",
-      breed: "rare",
-      weight: 20,
-      height: 10,
-      bio: "good dog",
-    },
-    {
-      key: 5,
-      name: "Roy",
-      sex: "M",
-      breed: "rare",
-      weight: 20,
-      height: 10,
-      bio: "good dog",
-    },
-  ];
-  const showModal = () => {};
+  const [showDog, setShowDog] = useState(true);
+  const [listData, setListData] = useState(
+    myDogs.map((dog, key) => ({
+      key: `${key}`,
+      name: dog.name,
+      bio: dog.bio,
+    }))
+  );
+
+  const closeRow = (rowMap, rowKey) => {
+    if (rowMap[rowKey]) {
+      rowMap[rowKey].closeRow();
+    }
+  };
+
+  const deleteRow = (rowMap, rowKey) => {
+    closeRow(rowMap, rowKey);
+    const newData = [...listData];
+    const prevIndex = listData.findIndex((item) => item.key === rowKey);
+    newData.splice(prevIndex, 1);
+    setListData(newData);
+  };
+
+  const onRowDidOpen = (rowKey) => {
+    console.log("This row opened", rowKey);
+  };
+
+  const onLeftActionStatusChange = (rowKey) => {
+    console.log("onLeftActionStatusChange", rowKey);
+  };
+
+  const onRightActionStatusChange = (rowKey) => {
+    console.log("onRightActionStatusChange", rowKey);
+  };
+
+  const onRightAction = (rowKey) => {
+    console.log("onRightAction", rowKey);
+  };
+
+  const onLeftAction = (rowKey) => {
+    console.log("onLeftAction", rowKey);
+  };
+
+  const VisibleItem = (props) => {
+    const { data, rowHeightAnimatedValue, removeRow, rightActionState } = props;
+
+    if (rightActionState) {
+      Animated.timing(rowHeightAnimatedValue, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: false,
+      }).start(() => {
+        removeRow();
+      });
+    }
+
+    return (
+      <Animated.View
+        style={[styles.rowFront, { height: rowHeightAnimatedValue }]}
+      >
+        <TouchableHighlight
+          style={styles.rowFrontVisible}
+          onPress={() => console.log("Element touched")}
+          underlayColor={"#aaa"}
+        >
+          <View>
+            <Text style={styles.title} numberOfLines={1}>
+              {data.item.name}
+            </Text>
+            <Text style={styles.details} numberOfLines={1}>
+              {data.item.bio}
+            </Text>
+          </View>
+        </TouchableHighlight>
+      </Animated.View>
+    );
+  };
+
+  const renderItem = (data, rowMap) => {
+    const rowHeightAnimatedValue = new Animated.Value(60);
+
+    return (
+      <VisibleItem
+        data={data}
+        rowHeightAnimatedValue={rowHeightAnimatedValue}
+        removeRow={() => deleteRow(rowMap, data.item.key)}
+      />
+    );
+  };
+
+  const HiddenItemWithActions = (props) => {
+    const {
+      swipeAnimatedValue,
+      leftActionActivated,
+      rightActionActivated,
+      rowActionAnimatedValue,
+      rowHeightAnimatedValue,
+      onClose,
+      onDelete,
+    } = props;
+
+    if (rightActionActivated) {
+      Animated.spring(rowActionAnimatedValue, {
+        toValue: 500,
+        useNativeDriver: false,
+      }).start();
+    } else {
+      Animated.spring(rowActionAnimatedValue, {
+        toValue: 75,
+        useNativeDriver: false,
+      }).start();
+    }
+
+    return (
+      <Animated.View
+        style={[styles.rowBack, { height: rowHeightAnimatedValue }]}
+      >
+        <Text>Left</Text>
+        {!leftActionActivated && (
+          <TouchableOpacity
+            style={[styles.backRightBtn, styles.backRightBtnLeft]}
+            onPress={onClose}
+          >
+            <MaterialCommunityIcons
+              name="close-circle-outline"
+              size={25}
+              style={styles.trash}
+              color="#fff"
+            />
+          </TouchableOpacity>
+        )}
+        {!leftActionActivated && (
+          <Animated.View
+            style={[
+              styles.backRightBtn,
+              styles.backRightBtnRight,
+              {
+                flex: 1,
+                width: rowActionAnimatedValue,
+              },
+            ]}
+          >
+            <TouchableOpacity
+              style={[styles.backRightBtn, styles.backRightBtnRight]}
+              onPress={onDelete}
+            >
+              <Animated.View
+                style={[
+                  styles.trash,
+                  {
+                    transform: [
+                      {
+                        scale: swipeAnimatedValue.interpolate({
+                          inputRange: [-90, -45],
+                          outputRange: [1, 0],
+                          extrapolate: "clamp",
+                        }),
+                      },
+                    ],
+                  },
+                ]}
+              >
+                <MaterialCommunityIcons
+                  name="trash-can-outline"
+                  size={25}
+                  color="#fff"
+                />
+              </Animated.View>
+            </TouchableOpacity>
+          </Animated.View>
+        )}
+      </Animated.View>
+    );
+  };
+
+  const renderHiddenItem = (data, rowMap) => {
+    const rowActionAnimatedValue = new Animated.Value(75);
+    const rowHeightAnimatedValue = new Animated.Value(60);
+
+    return (
+      <HiddenItemWithActions
+        data={data}
+        rowMap={rowMap}
+        rowActionAnimatedValue={rowActionAnimatedValue}
+        rowHeightAnimatedValue={rowHeightAnimatedValue}
+        onClose={() => closeRow(rowMap, data.item.key)}
+        onDelete={() => deleteRow(rowMap, data.item.key)}
+      />
+    );
+  };
+  const addDog = () => {};
+  const editDog = () => {};
+
   return (
-    <SafeAreaView>
-        <View>
-          <FlatList
-            ListHeaderComponent={
-              <>
-                <TouchableOpacity style={styles.box} onPress={() => showModal}>
-                  <Text style={styles.item}>
-                    {" "}
-                    Add Dog <Icon name="pluscircleo" />{" "}
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.box} onPress={() => showModal}>
-                  <Text style={styles.item}>
-                    {" "}
-                    Delete Dog <Icon name="minuscircleo" />{" "}
-                  </Text>
-                </TouchableOpacity>
-              </>
-            }
-            data={myDogs}
-            numColumns={2}
-            renderItem={({ item }) => (
-              <TouchableOpacity style={styles.box} onPress={() => showModal}>
-                <Text style={styles.item}> {item.name} </Text>
-              </TouchableOpacity>
-            )}
-          />
+    <View style={styles.container}>
+      <LinearGradient
+        colors={["#8D99AE", "#EDF2F4"]}
+        style={{ height: "100%" }}
+      >
+        <SwipeListView
+          data={listData}
+          renderItem={renderItem}
+          renderHiddenItem={renderHiddenItem}
+          leftOpenValue={75}
+          rightOpenValue={-150}
+          disableRightSwipe
+          onRowDidOpen={onRowDidOpen}
+          leftActivationValue={100}
+          rightActivationValue={-200}
+          leftActionValue={0}
+          rightActionValue={-500}
+          onLeftAction={onLeftAction}
+          onRightAction={onRightAction}
+          onLeftActionStatusChange={onLeftActionStatusChange}
+          onRightActionStatusChange={onRightActionStatusChange}
+        />
+        <View style={styles.addButton}>
+          <TouchableOpacity onPress={addDog}>
+            <Ionicons name="add-circle-outline" size={40} color="#D90429" />
+          </TouchableOpacity>
         </View>
-    </SafeAreaView>
+        <EditDog />
+        <AddDog isVisible={showDog} />
+      </LinearGradient>
+    </View>
   );
 };
 const styles = StyleSheet.create({
-  item: {
-    backgroundColor: "blue",
-    color: "white",
-    margin: 20,
-    padding: 20,
+  container: {
+    backgroundColor: "#f4f4f4",
+    flex: 1,
   },
-  box: {
-    backgroundColor: "yellow",
+  backTextWhite: {
+    color: "#FFF",
+  },
+  rowFront: {
+    backgroundColor: "#FFF",
+    borderRadius: 5,
+    height: 60,
+    margin: 5,
+    marginBottom: 15,
+    shadowColor: "#999",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
+  },
+  rowFrontVisible: {
+    backgroundColor: "#FFF",
+    borderRadius: 5,
+    height: 60,
+    padding: 10,
+    marginBottom: 15,
+  },
+  rowBack: {
+    alignItems: "center",
+    backgroundColor: "#DDD",
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingLeft: 15,
+    margin: 5,
+    marginBottom: 15,
+    borderRadius: 5,
+  },
+  backRightBtn: {
+    alignItems: "flex-end",
+    bottom: 0,
+    justifyContent: "center",
+    position: "absolute",
+    top: 0,
+    width: 75,
+    paddingRight: 17,
+  },
+  backRightBtnLeft: {
+    backgroundColor: "#1f65ff",
+    right: 75,
+  },
+  backRightBtnRight: {
+    backgroundColor: "red",
+    right: 0,
+    borderTopRightRadius: 5,
+    borderBottomRightRadius: 5,
+  },
+  trash: {
+    height: 25,
+    width: 25,
+    marginRight: 7,
+  },
+  title: {
+    fontSize: 14,
+    fontWeight: "bold",
+    marginBottom: 5,
+    color: "#666",
+  },
+  details: {
+    fontSize: 12,
+    color: "#999",
+  },
+  addButton: {
     margin: 15,
-    padding: 20,
+    alignContent: "center",
+    justifyContent: "center",
+    alignSelf: "center",
+    //borderRadius : 50,
+    //backgroundColor: "#D90429",
+    width: 40,
+    height: 40,
   },
 });
 export default DogManager;
