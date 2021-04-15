@@ -22,8 +22,11 @@ import LinearGradient from "react-native-linear-gradient";
 import { SwipeListView } from "react-native-swipe-list-view";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import EditDog from "../../components/EditDog";
+import jwt_decode from "jwt-decode";
+import Axios from "../../utilities/axios";
+const Storage = require("../../utilities/TokenStorage");
 
-const myDogs = [
+const data = [
   {
     key: 1,
     name: "Max",
@@ -74,9 +77,11 @@ const DogManager = () => {
   const nameRef = useRef();
   const bioRef = useRef();
   const breedRef = useRef();
-
-  const [name, setName] = useState("");
+  //user id
   const [userId, setUserId] = useState("");
+
+  //dog properties for adding a dog
+  const [name, setName] = useState("");
   const [bio, setBio] = useState("");
   const [breed, setBreed] = useState("");
   const [size, setSize] = useState("");
@@ -85,17 +90,39 @@ const DogManager = () => {
   const [isPottyTrained, setIsPottyTrained] = useState(false);
   const [isNeutered, setIsNeutered] = useState(false);
   const [dogId, setDogId] = useState();
+
+  // for showing modald
   const [showEditDog, setshowEditDog] = useState(false);
   const [showAddDog, setShowAddDog] = useState(false);
-  const [listData, setListData] = useState(
-    myDogs.map((dog, key) => ({
+
+  // list of mydogs
+  const [myDogs, setMyDogs] = useState(
+    data.map((dog, key) => ({
       key: `${key}`,
       name: dog.name,
       bio: dog.bio,
     }))
   );
   useEffect(() => {
-    
+    async function getInfo() {
+      try {
+        const token = await Storage.load("accessToken");
+        const userData = jwt_decode(token, { complete: true });
+        setUserId(userData.userId);
+        console.log(userId);
+        const json = {
+          id: userId,
+        };
+        await Axios.post("/getOwnersDogs", json)
+          .then(async function (response) {
+            console.log(response);
+          })
+          .catch((e) => console.log(e));
+      } catch (e) {
+        console.warn(e);
+      }
+    }
+    getInfo();
   }, []);
   const cancel = () => {
     setShowAddDog(false);
@@ -111,11 +138,26 @@ const DogManager = () => {
     setIsNeutered(false);
     setShowAddDog(true);
   };
-  const addDog = () => {};
+  const addDog = async () => {
+    try {
+      const json = {
+        Name : name,
+        UserID : userId,
+        Bio : bio,
+        Breed : breed,
+        Size : size,
+        Age : age,
+        Sex : sex,
+        isPottyTrained : isPottyTrained,
+        isNeutered : isNeutered
+      }
+      const response = await Axios.post('/createDog', json);
+      co
+    } catch (e) {
+      console.log(error);
+    }
+  };
   const editDog = () => {};
-
-
-  
 
   const closeRow = (rowMap, rowKey) => {
     if (rowMap[rowKey]) {
@@ -125,10 +167,10 @@ const DogManager = () => {
 
   const deleteRow = (rowMap, rowKey) => {
     closeRow(rowMap, rowKey);
-    const newData = [...listData];
-    const prevIndex = listData.findIndex((item) => item.key === rowKey);
+    const newData = [...myDogs];
+    const prevIndex = myDogs.findIndex((item) => item.key === rowKey);
     newData.splice(prevIndex, 1);
-    setListData(newData);
+    setMyDogs(newData);
   };
 
   const onRowDidOpen = (rowKey) => {
@@ -306,7 +348,7 @@ const DogManager = () => {
         style={{ height: "100%" }}
       >
         <SwipeListView
-          data={listData}
+          data={myDogs}
           renderItem={renderItem}
           renderHiddenItem={renderHiddenItem}
           leftOpenValue={75}
@@ -496,14 +538,6 @@ const DogManager = () => {
   );
 };
 
-
-
-
-
-
-
-
-
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#f4f4f4",
@@ -592,7 +626,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "space-between",
     backgroundColor: "rgba(0, 0, 0, 0.75)",
-    padding : 20,
+    padding: 20,
   },
   form: {
     padding: 10,
@@ -601,7 +635,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "white",
     width: 325,
-    borderRadius : 25
+    borderRadius: 25,
   },
   checkbox: {
     alignSelf: "center",
