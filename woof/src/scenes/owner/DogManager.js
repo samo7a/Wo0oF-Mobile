@@ -54,7 +54,7 @@ const DogManager = () => {
   const [editSex, editSetSex] = useState("");
   const [editIsPottyTrained, editSetIsPottyTrained] = useState(false);
   const [editIsNeutered, editSetIsNeutered] = useState(false);
-  const [editDogId, editSDogId] = useState();
+  const [editDogId, editSDogId] = useState(false);
   const [editmode, setEditmode] = useState(false);
 
   // for showing modal
@@ -71,7 +71,6 @@ const DogManager = () => {
         console.log("token : " + token);
         const userData = await jwt_decode(token, { complete: true });
         console.log("userData : " + JSON.stringify(userData));
-        setTimeout(() => {}, 1000);
         var id = userData.userId;
         console.log("id from useEffect: " + id);
         setUserId(id);
@@ -138,17 +137,39 @@ const DogManager = () => {
         isNeutered: isNeutered,
       };
       const response = await Axios.post("/createDog", json);
-
-      console.log(response.data);
+      const dog = {
+        key: response.data,
+        name: name,
+        bio: bio,
+        breed: breed,
+        size: size,
+        age: age,
+        sex: sex,
+        isPottyTrained: isPottyTrained,
+        isNeutered: isNeutered,
+      };
+      setMyDogs([...myDogs, dog]);
+      setShowAddDog(false);
     } catch (e) {
       console.log(error);
     }
   };
   const editDog = () => {};
-  const deleteItem = (index) => {
-    const arr = [...myDogs];
-    arr.splice(index, 1);
-    setMyDogs(arr);
+  const showModal = () => {
+    setshowEditDog(true);
+  };
+  const deleteItem = async (item) => {
+    var obj = {
+      UserID: userId,
+      DogID: item.key,
+    };
+    console.log(JSON.stringify(obj));
+    try {
+      await Axios.post("/deleteDog", obj);
+    } catch (e) {
+      console.log(e);
+    }
+    setMyDogs(myDogs.filter((dog) => dog.key !== item.key));
   };
 
   const editDogDetails = () => {
@@ -163,9 +184,14 @@ const DogManager = () => {
       >
         <FlatList
           data={myDogs}
+          keyExtractor={(item) => item.key.toString()}
           renderItem={({ item, index }) => {
             return (
-              <DogItem data={item} handleDelete={() => deleteItem(index)} />
+              <DogItem
+                data={item}
+                handleDelete={() => deleteItem(item)}
+                showEditModal={() => showModal()}
+              />
             );
           }}
           ItemSeparatorComponent={() => {
@@ -340,7 +366,7 @@ const DogManager = () => {
           </KeyboardAvoidingView>
         </Modal>
 
-        <Modal
+        {/* <Modal
           transparent={true}
           animationType="none"
           visible={showEditDog}
@@ -559,7 +585,7 @@ const DogManager = () => {
               </ScrollView>
             </SafeAreaView>
           </KeyboardAvoidingView>
-        </Modal>
+        </Modal> */}
       </LinearGradient>
     </View>
   );

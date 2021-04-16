@@ -15,16 +15,17 @@ const SCREEN_WIDTH = Dimensions.get("window").width;
 const DogItem = (props) => {
   const rightSwipe = (progress, dragX) => {
     const scale = dragX.interpolate({
-      inputRange: [-100, 0],
+      inputRange: [-50, 0],
       outputRange: [1, 0],
+      //extrapolate: "clamp",
     });
     return (
       <TouchableOpacity onPress={props.handleDelete} activeOpacity={0.6}>
         <View style={styles.deleteBox}>
-          <Animated.Text style={{ transform: [{ scale: scale }] }}>
+          <Animated.Text style={[{ transform: [{ scale: scale }] }]}>
             <MaterialCommunityIcons
               name="trash-can-outline"
-              size={15}
+              size={13}
               color="#fff"
             />
           </Animated.Text>
@@ -32,11 +33,14 @@ const DogItem = (props) => {
       </TouchableOpacity>
     );
   };
+
   return (
-    <Swipeable renderRightActions={rightSwipe}>
-      <View style={styles.container}>
-        <Text>My name is {props.data.name}.</Text>
-      </View>
+    <Swipeable renderRightActions={rightSwipe} overshootRight={false}>
+      <TouchableOpacity onPress={props.showModal}>
+        <View style={styles.container}>
+          <Text>My name is {props.data.name}.</Text>
+        </View>
+      </TouchableOpacity>
     </Swipeable>
   );
 };
@@ -46,7 +50,7 @@ export default DogItem;
 const styles = StyleSheet.create({
   container: {
     height: 80,
-    width: SCREEN_WIDTH * 0.9,
+    width: SCREEN_WIDTH * 0.8,
     backgroundColor: "white",
     justifyContent: "center",
     paddingHorizontal: 16,
@@ -58,7 +62,7 @@ const styles = StyleSheet.create({
     backgroundColor: "red",
     justifyContent: "center",
     alignItems: "center",
-    width: 80,
+    width: 100,
     height: 80,
     marginRight: 40,
     marginTop: 15,
