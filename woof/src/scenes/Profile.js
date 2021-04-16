@@ -114,8 +114,6 @@ const Profile = () => {
       ProfilePicture: " my profile pic",
       ShortBio: bio,
     };
-
-    console.log("make sure I am sending a boolean  " + JSON.stringify(json));
     await Axios.post("/editUser", json)
       .then(async function (response) {
         var token = response.data.accessToken;

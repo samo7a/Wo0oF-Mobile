@@ -13,71 +13,25 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   TextInput,
+  FlatList,
 } from "react-native";
+import DogItem from "./DogItem";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Slider from "@react-native-community/slider";
 import RNPickerSelect from "react-native-picker-select";
 import LinearGradient from "react-native-linear-gradient";
-import { SwipeListView } from "react-native-swipe-list-view";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import EditDog from "../../components/EditDog";
+
 import jwt_decode from "jwt-decode";
 import Axios from "../../utilities/axios";
 const Storage = require("../../utilities/TokenStorage");
 
-const data = [
-  {
-    key: 1,
-    name: "Max",
-    sex: "M",
-    breed: "rare",
-    weight: 20,
-    height: 10,
-    bio: "good dog",
-  },
-  {
-    key: 2,
-    name: "Lana",
-    sex: "F",
-    breed: "rare",
-    weight: 20,
-    height: 10,
-    bio: "good dog",
-  },
-  {
-    key: 3,
-    name: "Sisi",
-    sex: "F",
-    breed: "rare",
-    weight: 20,
-    height: 10,
-    bio: "good dog",
-  },
-  {
-    key: 4,
-    name: "Rex",
-    sex: "M",
-    breed: "rare",
-    weight: 20,
-    height: 10,
-    bio: "good dog",
-  },
-  {
-    key: 5,
-    name: "Roy",
-    sex: "M",
-    breed: "rare",
-    weight: 20,
-    height: 10,
-    bio: "good dog",
-  },
-];
 const DogManager = () => {
   const nameRef = useRef();
   const bioRef = useRef();
   const breedRef = useRef();
-  //user id
+
   const [userId, setUserId] = useState("");
 
   //dog properties for adding a dog
@@ -91,33 +45,65 @@ const DogManager = () => {
   const [isNeutered, setIsNeutered] = useState(false);
   const [dogId, setDogId] = useState();
 
-  // for showing modald
+  //dog properties for editing a dog
+  const [editName, editSetName] = useState("");
+  const [editBio, editSetBio] = useState("");
+  const [editBreed, editSetBreed] = useState("");
+  const [editSize, editSetSize] = useState("");
+  const [editAge, editSetAge] = useState(0);
+  const [editSex, editSetSex] = useState("");
+  const [editIsPottyTrained, editSetIsPottyTrained] = useState(false);
+  const [editIsNeutered, editSetIsNeutered] = useState(false);
+  const [editDogId, editSDogId] = useState();
+  const [editmode, setEditmode] = useState(false);
+
+  // for showing modal
   const [showEditDog, setshowEditDog] = useState(false);
   const [showAddDog, setShowAddDog] = useState(false);
 
   // list of mydogs
-  const [myDogs, setMyDogs] = useState(
-    data.map((dog, key) => ({
-      key: `${key}`,
-      name: dog.name,
-      bio: dog.bio,
-    }))
-  );
+  const [myDogs, setMyDogs] = useState([]);
+
   useEffect(() => {
     async function getInfo() {
       try {
         const token = await Storage.load("accessToken");
-        const userData = jwt_decode(token, { complete: true });
-        setUserId(userData.userId);
-        console.log(userId);
+        console.log("token : " + token);
+        const userData = await jwt_decode(token, { complete: true });
+        console.log("userData : " + JSON.stringify(userData));
+        setTimeout(() => {}, 1000);
+        var id = userData.userId;
+        console.log("id from useEffect: " + id);
+        setUserId(id);
+        console.log("userId from useEffect : " + userId);
         const json = {
-          id: userId,
+          id: id,
         };
-        await Axios.post("/getOwnersDogs", json)
-          .then(async function (response) {
-            console.log(response);
-          })
-          .catch((e) => console.log(e));
+        try {
+          const response = await Axios.post("/getOwnerDogs", json);
+          console.log("response length should be 5 : " + response.data.length);
+          console.log(response.data);
+          const array = [];
+          for (var i = 0; i < response.data.length; i++) {
+            var obj = {
+              key: response.data[i]._id,
+              name: response.data[i].Name,
+              age: response.data[i].Age,
+              bio: response.data[i].Bio,
+              size: response.data[i].Size,
+              breed: response.data[i].Breed,
+              sex: response.data[i].Sex,
+              isNeutered: response.data[i].isNeutered,
+              isPottyTrained: response.data[i].isPottyTrained,
+            };
+            array.push(obj);
+          }
+          console.log(" array : " + array);
+          setMyDogs(array);
+          console.log(" myDogs : " + array);
+        } catch (e) {
+          console.log(e);
+        }
       } catch (e) {
         console.warn(e);
       }
@@ -141,204 +127,32 @@ const DogManager = () => {
   const addDog = async () => {
     try {
       const json = {
-        Name : name,
-        UserID : userId,
-        Bio : bio,
-        Breed : breed,
-        Size : size,
-        Age : age,
-        Sex : sex,
-        isPottyTrained : isPottyTrained,
-        isNeutered : isNeutered
-      }
-      const response = await Axios.post('/createDog', json);
-      co
+        Name: name,
+        UserID: userId,
+        Bio: bio,
+        Breed: breed,
+        Size: size,
+        Age: age,
+        Sex: sex,
+        isPottyTrained: isPottyTrained,
+        isNeutered: isNeutered,
+      };
+      const response = await Axios.post("/createDog", json);
+
+      console.log(response.data);
     } catch (e) {
       console.log(error);
     }
   };
   const editDog = () => {};
-
-  const closeRow = (rowMap, rowKey) => {
-    if (rowMap[rowKey]) {
-      rowMap[rowKey].closeRow();
-    }
+  const deleteItem = (index) => {
+    const arr = [...myDogs];
+    arr.splice(index, 1);
+    setMyDogs(arr);
   };
 
-  const deleteRow = (rowMap, rowKey) => {
-    closeRow(rowMap, rowKey);
-    const newData = [...myDogs];
-    const prevIndex = myDogs.findIndex((item) => item.key === rowKey);
-    newData.splice(prevIndex, 1);
-    setMyDogs(newData);
-  };
-
-  const onRowDidOpen = (rowKey) => {
-    console.log("This row opened", rowKey);
-  };
-
-  const onLeftActionStatusChange = (rowKey) => {
-    console.log("onLeftActionStatusChange", rowKey);
-  };
-
-  const onRightActionStatusChange = (rowKey) => {
-    console.log("onRightActionStatusChange", rowKey);
-  };
-
-  const onRightAction = (rowKey) => {
-    console.log("onRightAction", rowKey);
-  };
-
-  const onLeftAction = (rowKey) => {
-    console.log("onLeftAction", rowKey);
-  };
-
-  const VisibleItem = (props) => {
-    const { data, rowHeightAnimatedValue, removeRow, rightActionState } = props;
-
-    if (rightActionState) {
-      Animated.timing(rowHeightAnimatedValue, {
-        toValue: 0,
-        duration: 200,
-        useNativeDriver: false,
-      }).start(() => {
-        removeRow();
-      });
-    }
-
-    return (
-      <Animated.View
-        style={[styles.rowFront, { height: rowHeightAnimatedValue }]}
-      >
-        <TouchableHighlight
-          style={styles.rowFrontVisible}
-          onPress={() => console.log("Element touched")}
-          underlayColor={"#aaa"}
-        >
-          <View>
-            <Text style={styles.title} numberOfLines={1}>
-              {data.item.name}
-            </Text>
-            <Text style={styles.details} numberOfLines={1}>
-              {data.item.bio}
-            </Text>
-          </View>
-        </TouchableHighlight>
-      </Animated.View>
-    );
-  };
-
-  const renderItem = (data, rowMap) => {
-    const rowHeightAnimatedValue = new Animated.Value(60);
-
-    return (
-      <VisibleItem
-        data={data}
-        rowHeightAnimatedValue={rowHeightAnimatedValue}
-        removeRow={() => deleteRow(rowMap, data.item.key)}
-      />
-    );
-  };
-
-  const HiddenItemWithActions = (props) => {
-    const {
-      swipeAnimatedValue,
-      leftActionActivated,
-      rightActionActivated,
-      rowActionAnimatedValue,
-      rowHeightAnimatedValue,
-      onClose,
-      onDelete,
-    } = props;
-
-    if (rightActionActivated) {
-      Animated.spring(rowActionAnimatedValue, {
-        toValue: 500,
-        useNativeDriver: false,
-      }).start();
-    } else {
-      Animated.spring(rowActionAnimatedValue, {
-        toValue: 75,
-        useNativeDriver: false,
-      }).start();
-    }
-
-    return (
-      <Animated.View
-        style={[styles.rowBack, { height: rowHeightAnimatedValue }]}
-      >
-        <Text>Left</Text>
-        {!leftActionActivated && (
-          <TouchableOpacity
-            style={[styles.backRightBtn, styles.backRightBtnLeft]}
-            onPress={onClose}
-          >
-            <MaterialCommunityIcons
-              name="close-circle-outline"
-              size={25}
-              style={styles.trash}
-              color="#fff"
-            />
-          </TouchableOpacity>
-        )}
-        {!leftActionActivated && (
-          <Animated.View
-            style={[
-              styles.backRightBtn,
-              styles.backRightBtnRight,
-              {
-                flex: 1,
-                width: rowActionAnimatedValue,
-              },
-            ]}
-          >
-            <TouchableOpacity
-              style={[styles.backRightBtn, styles.backRightBtnRight]}
-              onPress={onDelete}
-            >
-              <Animated.View
-                style={[
-                  styles.trash,
-                  {
-                    transform: [
-                      {
-                        scale: swipeAnimatedValue.interpolate({
-                          inputRange: [-90, -45],
-                          outputRange: [1, 0],
-                          extrapolate: "clamp",
-                        }),
-                      },
-                    ],
-                  },
-                ]}
-              >
-                <MaterialCommunityIcons
-                  name="trash-can-outline"
-                  size={25}
-                  color="#fff"
-                />
-              </Animated.View>
-            </TouchableOpacity>
-          </Animated.View>
-        )}
-      </Animated.View>
-    );
-  };
-
-  const renderHiddenItem = (data, rowMap) => {
-    const rowActionAnimatedValue = new Animated.Value(75);
-    const rowHeightAnimatedValue = new Animated.Value(60);
-
-    return (
-      <HiddenItemWithActions
-        data={data}
-        rowMap={rowMap}
-        rowActionAnimatedValue={rowActionAnimatedValue}
-        rowHeightAnimatedValue={rowHeightAnimatedValue}
-        onClose={() => closeRow(rowMap, data.item.key)}
-        onDelete={() => deleteRow(rowMap, data.item.key)}
-      />
-    );
+  const editDogDetails = () => {
+    setEditmode(true);
   };
 
   return (
@@ -347,30 +161,22 @@ const DogManager = () => {
         colors={["#8D99AE", "#EDF2F4"]}
         style={{ height: "100%" }}
       >
-        <SwipeListView
+        <FlatList
           data={myDogs}
-          renderItem={renderItem}
-          renderHiddenItem={renderHiddenItem}
-          leftOpenValue={75}
-          rightOpenValue={-150}
-          disableRightSwipe
-          onRowDidOpen={onRowDidOpen}
-          leftActivationValue={100}
-          rightActivationValue={-200}
-          leftActionValue={0}
-          rightActionValue={-500}
-          onLeftAction={onLeftAction}
-          onRightAction={onRightAction}
-          onLeftActionStatusChange={onLeftActionStatusChange}
-          onRightActionStatusChange={onRightActionStatusChange}
+          renderItem={({ item, index }) => {
+            return (
+              <DogItem data={item} handleDelete={() => deleteItem(index)} />
+            );
+          }}
+          ItemSeparatorComponent={() => {
+            return <View style={styles.seperatorLine}></View>;
+          }}
         />
         <View style={styles.addButton}>
           <TouchableOpacity onPress={showAddDogModal}>
             <Ionicons name="add-circle-outline" size={40} color="#D90429" />
           </TouchableOpacity>
         </View>
-
-        <EditDog isVisible={showEditDog} />
 
         <Modal
           transparent={true}
@@ -526,6 +332,227 @@ const DogManager = () => {
                           </View>
                         </TouchableOpacity>
                       </View>
+                    </View>
+                  </View>
+                </TouchableWithoutFeedback>
+              </ScrollView>
+            </SafeAreaView>
+          </KeyboardAvoidingView>
+        </Modal>
+
+        <Modal
+          transparent={true}
+          animationType="none"
+          visible={showEditDog}
+          style={{ zIndex: 1100 }}
+          onRequestClose={() => {}}
+        >
+          <KeyboardAvoidingView behavior="height" style={{ flex: 1 }}>
+            <SafeAreaView style={{ flex: 1 }}>
+              <ScrollView>
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                  <View style={styles.modalBackground}>
+                    <View style={styles.form}>
+                      <Text style={styles.text}>Name</Text>
+                      <TextInput
+                        style={styles.inputText}
+                        placeholder="Name"
+                        ref={nameRef}
+                        onSubmitEditing={() => bioRef.current.focus()}
+                        onChangeText={(e) => editSetName(e)}
+                        value={editName}
+                        editable={editmode}
+                        backgroundColor="white"
+                        keyboardType="default"
+                      />
+                      <Text style={styles.text}>Bio</Text>
+                      <TextInput
+                        style={styles.inputbio}
+                        placeholder="Bio..."
+                        ref={bioRef}
+                        onSubmitEditing={() => breedRef.current.focus()}
+                        onChangeText={(e) => editSetBio(e)}
+                        value={editBio}
+                        editable={editmode}
+                        backgroundColor="white"
+                        keyboardType="default"
+                        multiline={true}
+                      />
+                      <Text style={styles.text}>Breed</Text>
+                      <TextInput
+                        style={styles.inputText}
+                        placeholder="Breed"
+                        ref={breedRef}
+                        onChangeText={(e) => editSetBreed(e)}
+                        value={editBreed}
+                        editable={editmode}
+                        backgroundColor="white"
+                        keyboardType="default"
+                      />
+                      <View style={styles.pickerView}>
+                        <Text>
+                          {!editSize ? "What is the size of your dog?" : null}
+                        </Text>
+                        <RNPickerSelect
+                          placeholder={{
+                            label: "What is the size of your dog?",
+                            value: null,
+                          }}
+                          onValueChange={(e) => editSetSize(e)}
+                          items={[
+                            { label: "Small", value: "Small" },
+                            { label: "Medium", value: "Medium" },
+                            { label: "Large", value: "Large" },
+                          ]}
+                          value={editSize}
+                          disabled={!editmode}
+                        />
+                      </View>
+                      <View style={styles.pickerView}>
+                        <Text>
+                          {!editSex ? "What is the sex of your dog?" : null}
+                        </Text>
+                        <RNPickerSelect
+                          placeholder={{
+                            label: "What is the sex of your dog?",
+                            value: null,
+                          }}
+                          onValueChange={(e) => editSetSex(e)}
+                          items={[
+                            { label: "Female", value: "Female" },
+                            { label: "Male", value: "Male" },
+                            { label: "Other", value: "Other" },
+                          ]}
+                          value={editSex}
+                          disabled={!editmode}
+                        />
+                        <Text>
+                          {editSex ? `It is a ${editSex} Dog!` : null}
+                        </Text>
+                      </View>
+                      <Text style={styles.text}>Age: {editAge} years old</Text>
+                      <Slider
+                        style={{ width: 300, height: 40 }}
+                        minimumValue={0}
+                        maximumValue={25}
+                        step={0.25}
+                        value={editAge}
+                        disabled={!editmode}
+                        minimumTrackTintColor="#2B2D42"
+                        maximumTrackTintColor="#8D99AE"
+                        thumbTintColor="#D90429"
+                        onValueChange={(e) => editSetAge(e)}
+                      />
+
+                      <BouncyCheckbox
+                        size={25}
+                        fillColor="red"
+                        unfillColor="#FFFFFF"
+                        text="Potty Trained?"
+                        iconStyle={{ borderColor: "red" }}
+                        textStyle={{ textDecorationLine: "none" }}
+                        onPress={() => {
+                          editSetIsPottyTrained(!editIsPottyTrained);
+                        }}
+                        style={styles.checkbox}
+                        disabled={!editmode}
+                      />
+                      <BouncyCheckbox
+                        size={25}
+                        fillColor="red"
+                        unfillColor="#FFFFFF"
+                        text="Neutered?"
+                        iconStyle={{ borderColor: "red" }}
+                        textStyle={{ textDecorationLine: "none" }}
+                        onPress={() => {
+                          editSetIsNeutered(!editIsNeutered);
+                        }}
+                        style={styles.checkbox}
+                        disabled={!editmode}
+                      />
+                      {editmode ? (
+                        <>
+                          <View style={styles.buttonView}>
+                            <TouchableOpacity onPress={cancel}>
+                              <View style={styles.secondaryButton}>
+                                <Text
+                                  style={{
+                                    fontFamily: "Arial",
+                                    fontSize: 15,
+                                    color: "white",
+                                    alignSelf: "center",
+                                  }}
+                                >
+                                  <Ionicons
+                                    name="close"
+                                    size={25}
+                                    color="white"
+                                  />
+                                </Text>
+                              </View>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={editDog}>
+                              <View style={styles.primaryButton}>
+                                <Text
+                                  style={{
+                                    fontFamily: "Arial",
+                                    fontSize: 15,
+                                    color: "white",
+                                    alignSelf: "center",
+                                  }}
+                                >
+                                  <Ionicons
+                                    name="save-outline"
+                                    size={25}
+                                    color="white"
+                                  />
+                                </Text>
+                              </View>
+                            </TouchableOpacity>
+                          </View>
+                        </>
+                      ) : (
+                        <>
+                          <View style={styles.buttonView}>
+                            <TouchableOpacity onPress={cancel}>
+                              <View style={styles.secondaryButton}>
+                                <Text
+                                  style={{
+                                    fontFamily: "Arial",
+                                    fontSize: 15,
+                                    color: "white",
+                                    alignSelf: "center",
+                                  }}
+                                >
+                                  <Ionicons
+                                    name="close"
+                                    size={25}
+                                    color="white"
+                                  />
+                                </Text>
+                              </View>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={editDogDetails}>
+                              <View style={styles.primaryButton}>
+                                <Text
+                                  style={{
+                                    fontFamily: "Arial",
+                                    fontSize: 15,
+                                    color: "white",
+                                    alignSelf: "center",
+                                  }}
+                                >
+                                  <Ionicons
+                                    name="pencil-outline"
+                                    size={25}
+                                    color="white"
+                                  />
+                                </Text>
+                              </View>
+                            </TouchableOpacity>
+                          </View>
+                        </>
+                      )}
                     </View>
                   </View>
                 </TouchableWithoutFeedback>
