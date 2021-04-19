@@ -75,6 +75,7 @@ const BrowseAdoptor = () => {
     console.log(`skip `);
     handleChoice(-1);
   };
+
   const removeCard = useCallback(() => {
     setCards((previous) => previous.slice(1));
     swipe.setValue({ x: 0, y: 0 });

@@ -268,7 +268,7 @@ const Profile = () => {
                   keyboardType="decimal-pad"
                 />
                 {/* location */}
-                <Text style={styles.text}>Location</Text>
+                <Text style={styles.text}>Zip Code</Text>
                 <TextInput
                   ref={addressRef}
                   onSubmitEditing={() => bioRef.current.focus()}

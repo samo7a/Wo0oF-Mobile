@@ -45,68 +45,67 @@ const DogManager = () => {
   const [isNeutered, setIsNeutered] = useState(false);
   const [dogId, setDogId] = useState();
 
-  //dog properties for editing a dog
-  const [editName, editSetName] = useState("");
-  const [editBio, editSetBio] = useState("");
-  const [editBreed, editSetBreed] = useState("");
-  const [editSize, editSetSize] = useState("");
-  const [editAge, editSetAge] = useState(0);
-  const [editSex, editSetSex] = useState("");
-  const [editIsPottyTrained, editSetIsPottyTrained] = useState(false);
-  const [editIsNeutered, editSetIsNeutered] = useState(false);
-  const [editDogId, editSDogId] = useState(false);
-  const [editmode, setEditmode] = useState(false);
+  // //dog properties for editing a dog
+  // const [editName, editSetName] = useState("");
+  // const [editBio, editSetBio] = useState("");
+  // const [editBreed, editSetBreed] = useState("");
+  // const [editSize, editSetSize] = useState("");
+  // const [editAge, editSetAge] = useState(0);
+  // const [editSex, editSetSex] = useState("");
+  // const [editIsPottyTrained, editSetIsPottyTrained] = useState(false);
+  // const [editIsNeutered, editSetIsNeutered] = useState(false);
+  // const [editDogId, editSDogId] = useState(false);
+  // const [editmode, setEditmode] = useState(false);
 
-  // for showing modal
+  // // for showing modal
   const [showEditDog, setshowEditDog] = useState(false);
   const [showAddDog, setShowAddDog] = useState(false);
 
   // list of mydogs
   const [myDogs, setMyDogs] = useState([]);
-
-  useEffect(() => {
-    async function getInfo() {
+  async function getInfo() {
+    try {
+      const token = await Storage.load("accessToken");
+      console.log("token : " + token);
+      const userData = await jwt_decode(token, { complete: true });
+      console.log("userData : " + JSON.stringify(userData));
+      var id = userData.userId;
+      console.log("id from useEffect: " + id);
+      setUserId(id);
+      console.log("userId from useEffect : " + userId);
+      const json = {
+        id: id,
+      };
       try {
-        const token = await Storage.load("accessToken");
-        console.log("token : " + token);
-        const userData = await jwt_decode(token, { complete: true });
-        console.log("userData : " + JSON.stringify(userData));
-        var id = userData.userId;
-        console.log("id from useEffect: " + id);
-        setUserId(id);
-        console.log("userId from useEffect : " + userId);
-        const json = {
-          id: id,
-        };
-        try {
-          const response = await Axios.post("/getOwnerDogs", json);
-          console.log("response length should be 5 : " + response.data.length);
-          console.log(response.data);
-          const array = [];
-          for (var i = 0; i < response.data.length; i++) {
-            var obj = {
-              key: response.data[i]._id,
-              name: response.data[i].Name,
-              age: response.data[i].Age,
-              bio: response.data[i].Bio,
-              size: response.data[i].Size,
-              breed: response.data[i].Breed,
-              sex: response.data[i].Sex,
-              isNeutered: response.data[i].isNeutered,
-              isPottyTrained: response.data[i].isPottyTrained,
-            };
-            array.push(obj);
-          }
-          console.log(" array : " + array);
-          setMyDogs(array);
-          console.log(" myDogs : " + array);
-        } catch (e) {
-          console.log(e);
+        const response = await Axios.post("/getOwnerDogs", json);
+        console.log("response length should be 5 : " + response.data.length);
+        console.log(response.data);
+        const array = [];
+        for (var i = 0; i < response.data.length; i++) {
+          var obj = {
+            key: response.data[i]._id,
+            name: response.data[i].Name,
+            age: response.data[i].Age,
+            bio: response.data[i].Bio,
+            size: response.data[i].Size,
+            breed: response.data[i].Breed,
+            sex: response.data[i].Sex,
+            isNeutered: response.data[i].isNeutered,
+            isPottyTrained: response.data[i].isPottyTrained,
+          };
+          array.push(obj);
         }
+        console.log(" array : " + array);
+        setMyDogs(array);
+        console.log(" myDogs : " + array);
       } catch (e) {
-        console.warn(e);
+        console.log(e);
       }
+    } catch (e) {
+      console.warn(e);
     }
+  }
+  useEffect(() => {
     getInfo();
   }, []);
   const cancel = () => {
@@ -154,7 +153,7 @@ const DogManager = () => {
       console.log(error);
     }
   };
-  const editDog = () => {};
+
   const showModal = () => {
     setshowEditDog(true);
   };
@@ -176,6 +175,10 @@ const DogManager = () => {
     setEditmode(true);
   };
 
+  function editDogArray(dogToEdit) {
+    getInfo();
+  }
+
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -189,8 +192,10 @@ const DogManager = () => {
             return (
               <DogItem
                 data={item}
+                userId={userId}
                 handleDelete={() => deleteItem(item)}
                 showEditModal={() => showModal()}
+                editDogArray={editDogArray}
               />
             );
           }}

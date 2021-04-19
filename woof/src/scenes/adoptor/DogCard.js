@@ -11,6 +11,8 @@ import {
 import LinearGradient from "react-native-linear-gradient";
 import React, { useState, useCallback } from "react";
 import Choice from "../../components/Choice";
+import Icon from "react-native-vector-icons/FontAwesome";
+import Icon2 from "react-native-vector-icons/Entypo";
 const {height, width } =  Dimensions.get('window');
 
 const DogCard = ({
@@ -78,6 +80,7 @@ const DogCard = ({
   }, [likeOpacity, nopeOpacity]);
 
   return isFlipped ? (
+    <>
     <Animated.View
       style={[styles.container, isFirst && animatedCardStyle]}
       {...rest}
@@ -96,6 +99,19 @@ const DogCard = ({
         {isFirst && renderChoice()}
       </TouchableOpacity>
     </Animated.View>
+    <View style={styles.buttonView}>
+    <TouchableOpacity onPress={flip}>
+      <View style={styles.skip}>
+        <Icon2
+          name="cross"
+          size={35}
+          color="#EDF2F4"
+          style={{ alignSelf: "center" }}
+        />
+      </View>
+    </TouchableOpacity>
+    </View>
+    </>
   ) : (
     <TouchableOpacity style={styles.container} onPress={flip}>
       <View style={styles.des}>
@@ -120,7 +136,7 @@ const DogCard = ({
         <Text style={styles.desText}>Bio: {bio}</Text>
       </View>
     </TouchableOpacity>
-  );
+  )
 };
 const styles = StyleSheet.create({
   container: {
@@ -186,6 +202,36 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     shadowOpacity: 0.3,
     elevation: 2,
+  },
+  love: {
+    backgroundColor: "green",
+    borderRadius: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "black",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowRadius: 6,
+    shadowOpacity: 0.3,
+    elevation: 2,
+    padding: 15,
+  },
+  skip: {
+    backgroundColor: "red",
+    borderRadius: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "black",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowRadius: 6,
+    shadowOpacity: 0.3,
+    elevation: 2,
+    padding: 15,
   },
 });
 export default DogCard;
