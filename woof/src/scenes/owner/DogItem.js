@@ -15,6 +15,7 @@ import {
   TextInput,
   FlatList,
   Dimensions,
+  Image,
 } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Swipeable from "react-native-gesture-handler/Swipeable";
@@ -24,6 +25,9 @@ import Slider from "@react-native-community/slider";
 import RNPickerSelect from "react-native-picker-select";
 import LinearGradient from "react-native-linear-gradient";
 import Axios from "../../utilities/axios";
+import defaultProfilePic from "../../images/default-profile-with-dog.png";
+import * as ImagePicker from "react-native-image-picker";
+import { Picker } from "native-base";
 
 //dog properties for editing a dog
 
@@ -44,6 +48,8 @@ const DogItem = (props) => {
   const [editIsNeutered, editSetIsNeutered] = useState(props.data.isNeutered);
   //const [editDogId, editSDogId] = useState(false);
   const [editmode, setEditmode] = useState(false);
+  const [profilePic, setProfilePic] = useState(defaultProfilePic);
+
   const showModal = () => {
     setshowEditDog(true);
   };
@@ -73,7 +79,22 @@ const DogItem = (props) => {
       console.log(e);
     }
   };
-
+  const choosePhoto = () => {
+    const options = {
+      noData: true,
+      mediaType: "photo",
+    };
+    ImagePicker.launchImageLibrary(options, (response) => {
+      if (response.uri) {
+        setProfilePic(response);
+      }
+    });
+    //TODO: send the photo the server
+  };
+  const removePhoto = () => {
+    setProfilePic(defaultProfilePic);
+    //TODO: send the profile pic to the server.
+  };
   // for showing modal
   const [showEditDog, setshowEditDog] = useState(false);
   const rightSwipe = (progress, dragX) => {
@@ -105,10 +126,9 @@ const DogItem = (props) => {
           width: SCREEN_WIDTH * 0.8,
           backgroundColor: "red",
           justifyContent: "center",
-          //paddingHorizontal: 16,
           marginRight: 15,
-          marginTop : 15,
-          marginBottom : 15,
+          marginTop: 15,
+          marginBottom: 15,
           alignSelf: "center",
           borderRadius: 10,
         }}
@@ -122,8 +142,10 @@ const DogItem = (props) => {
               <Text>Size: {props.data.size}.</Text>
               <Text>Breed: {props.data.breed}.</Text>
               <Text>Sex: {props.data.sex}.</Text>
-              <Text>isNeutered: {props.data.isNeutered}.</Text>
-              <Text>isPottyTrained: {props.data.isPottyTrained}.</Text>
+              <Text>isNeutered: {props.data.isNeutered ? "Yes" : "No"}.</Text>
+              <Text>
+                isPottyTrained: {props.data.isPottyTrained ? "Yes" : "No"}.
+              </Text>
             </View>
           </TouchableOpacity>
         </Swipeable>
@@ -142,6 +164,52 @@ const DogItem = (props) => {
               <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <View style={styles.modalBackground}>
                   <View style={styles.form}>
+                    <TouchableOpacity
+                      onPress={choosePhoto}
+                      style={{ margin: 25 }}
+                    >
+                      <View
+                        style={{
+                          position: "relative",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Image style={styles.photo} source={profilePic} />
+                        <Text
+                          style={{
+                            color: "white",
+                            position: "absolute",
+                            alignSelf: "center",
+                            textAlign: "center",
+                          }}
+                        >
+                          Upload Profile Picture
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={removePhoto}
+                      style={styles.button}
+                    >
+                      <View
+                        style={{
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Text
+                          style={{
+                            color: "white",
+                            alignSelf: "center",
+                            textAlign: "center",
+                            padding: 5,
+                          }}
+                        >
+                          Remove Photo
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
                     <Text style={styles.text}>Name</Text>
                     <TextInput
                       style={styles.inputText}
@@ -174,44 +242,37 @@ const DogItem = (props) => {
                       keyboardType="default"
                     />
                     <View style={styles.pickerView}>
-                      <Text>
-                        {!editSize ? "What is the size of your dog?" : null}
-                      </Text>
-                      <RNPickerSelect
-                        placeholder={{
-                          label: "What is the size of your dog?",
-                          value: null,
-                        }}
+                      <Text>{"What is the size of your dog?"}</Text>
+                      <Picker
+                        note
+                        mode="dropdown"
+                        style={{ width: 200 }}
+                        selectedValue={editSize}
                         onValueChange={(e) => editSetSize(e)}
-                        items={[
-                          { label: "Small", value: "Small" },
-                          { label: "Medium", value: "Medium" },
-                          { label: "Large", value: "Large" },
-                        ]}
-                        value={editSize}
-                        disabled={!editmode}
-                      />
+                        enabled={editmode}
+                      >
+                        <Picker.Item label="Small" value="Small" />
+                        <Picker.Item label="Medium" value="Medium" />
+                        <Picker.Item label="Large" value="Large" />
+                      </Picker>
                     </View>
                     <View style={styles.pickerView}>
-                      <Text>
-                        {!editSex ? "What is the sex of your dog?" : null}
-                      </Text>
-                      <RNPickerSelect
-                        placeholder={{
-                          label: "What is the sex of your dog?",
-                          value: null,
-                        }}
+                      <Text>{"What is the sex of your dog?"}</Text>
+
+                      <Picker
+                        note
+                        mode="dropdown"
+                        style={{ width: 200 }}
+                        selectedValue={editSex}
                         onValueChange={(e) => editSetSex(e)}
-                        items={[
-                          { label: "Female", value: "Female" },
-                          { label: "Male", value: "Male" },
-                          { label: "Other", value: "Other" },
-                        ]}
-                        value={editSex}
-                        disabled={!editmode}
-                      />
-                      <Text>{editSex ? `It is a ${editSex} Dog!` : null}</Text>
+                        enabled={editmode}
+                      >
+                        <Picker.Item label="Male" value="Male" />
+                        <Picker.Item label="Female" value="Female" />
+                        <Picker.Item label="Other" value="Other" />
+                      </Picker>
                     </View>
+
                     <Text style={styles.text}>Age: {editAge} years old</Text>
                     <Slider
                       style={{ width: 300, height: 40 }}
@@ -481,11 +542,18 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   pickerView: {
-    flexDirection: "column",
+    //flexDirection: "column",
     fontSize: 12,
     width: 300,
     paddingHorizontal: 10,
     paddingVertical: 8,
     paddingRight: 30,
+  },
+  photo: {
+    height: 150,
+    width: 150,
+    borderRadius: 75,
+    alignSelf: "center",
+    justifyContent: "space-evenly",
   },
 });
