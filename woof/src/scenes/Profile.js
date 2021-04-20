@@ -70,9 +70,23 @@ const Profile = () => {
       mediaType: "photo",
     };
     ImagePicker.launchImageLibrary(options, (response) => {
+      if (response.didCancel) return;
+      console.log(response.type);
+      console.log(response.fileName);
+      console.log(response.fileSize);
+      console.log(response.height);
+      console.log(response.width);
       if (response.uri) {
         setProfilePic(response);
       }
+
+      const img = {
+        uri: response.uri,
+        type: response.type,
+        name:
+          response.fileName ||
+          response.uri.substr(response.uri.lastIndexOf("/" + 1)),
+      };
     });
     //TODO: send the photo the server
   };

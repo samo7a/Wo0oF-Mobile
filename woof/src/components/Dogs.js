@@ -125,7 +125,7 @@ const Dogs = [
     bred_for: "Guarding",
     breed_group: "Mixed",
     description:
-      "The Alapaha Blue Blood Bulldog is a well-developed, exaggerated bulldog with a broad head and natural drop ears. The prominent muzzle is covered by loose upper lips. The prominent eyes are set well apart. The Alapaha's coat is relatively short and fairly stiff. Preferred colors are blue merle, brown merle, or red merle all trimmed in white or chocolate and white. Also preferred are the glass eyes (blue) or marble eyes (brown and blue mixed in a single eye). The ears and tail are never trimmed or docked. The body is sturdy and very muscular. The well-muscled hips are narrower than the chest. The straight back is as long as the dog is high at the shoulders. The dewclaws are never removed and the feet are cat-like.",
+      "The Alapaha Blue Blood Bulldog is a well-developed, exaggerated bulldog.",
     height: {
       imperial: "18 - 24",
       metric: "46 - 61",
@@ -504,6 +504,5 @@ const Dogs = [
       metric: "16 - 29",
     },
   },
- 
 ];
 export default Dogs;

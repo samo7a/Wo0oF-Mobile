@@ -25,7 +25,7 @@ import Slider from "@react-native-community/slider";
 import RNPickerSelect from "react-native-picker-select";
 import LinearGradient from "react-native-linear-gradient";
 import Axios from "../../utilities/axios";
-import defaultProfilePic from "../../images/default-profile-with-dog.png";
+import defaultProfilePic from "../../images/dogAvatar.jpg";
 import * as ImagePicker from "react-native-image-picker";
 import { Picker } from "native-base";
 
@@ -43,9 +43,21 @@ const DogItem = (props) => {
   const [editIsPottyTrained, editSetIsPottyTrained] = useState(
     props.data.isPottyTrained
   );
+  const [editIsNeutered, editSetIsNeutered] = useState(props.data.isNeutered);
+
+  const [oldeditName, oldeditSetName] = useState(props.data.name);
+  const [oldeditBio, oldeditSetBio] = useState(props.data.bio);
+  const [oldeditBreed, oldeditSetBreed] = useState(props.data.breed);
+  const [oldeditSize, oldeditSetSize] = useState(props.data.size);
+  const [oldeditAge, oldeditSetAge] = useState(props.data.age);
+  const [oldeditSex, oldeditSetSex] = useState(props.data.sex);
+  const [oldeditIsPottyTrained, oldeditSetIsPottyTrained] = useState(
+    props.data.isPottyTrained
+  );
+  const [oldeditIsNeutered, oldeditSetIsNeutered] = useState(props.data.isNeutered);
   const [dogId, setDogId] = useState(props.data.key);
   const [userId, setUserId] = useState(props.userId);
-  const [editIsNeutered, editSetIsNeutered] = useState(props.data.isNeutered);
+
   //const [editDogId, editSDogId] = useState(false);
   const [editmode, setEditmode] = useState(false);
   const [profilePic, setProfilePic] = useState(defaultProfilePic);
@@ -53,8 +65,36 @@ const DogItem = (props) => {
   const showModal = () => {
     setshowEditDog(true);
   };
-
-  const editDog = async () => {
+  const hideModal = () => {
+    setshowEditDog(false);
+  };
+  const cancel = () => {
+    setEditmode(false);
+    hideModal();
+  };
+  const goback = () => {
+    editSetBio(oldeditBio);
+    editSetBreed(oldeditBreed);
+    editSetName(oldeditName);
+    editSetSize(oldeditSize);
+    editSetSex(oldeditSex);
+    editSetAge(oldeditAge);
+    editSetIsNeutered(oldeditIsNeutered);
+    editSetIsPottyTrained(oldeditIsPottyTrained);
+    setEditmode(false);
+  };
+  const edit = () => {
+    oldeditSetBio(editBio);
+    oldeditSetBreed(editBreed);
+    oldeditSetName(editName);
+    oldeditSetSize(editSize);
+    oldeditSetSex(editSex);
+    oldeditSetAge(editAge);
+    oldeditSetIsNeutered(editIsNeutered);
+    oldeditSetIsPottyTrained(editIsPottyTrained);
+    setEditmode(true);
+  };
+  const save = async () => {
     console.log(dogId);
     var obj = {
       UserID: userId,
@@ -74,8 +114,10 @@ const DogItem = (props) => {
       await Axios.post("/editDog", obj);
       props.editDogArray(props.data);
       setEditmode(false);
-      setshowEditDog(false);
+      hideModal()
     } catch (e) {
+      setEditmode(false);
+      hideModal();
       console.log(e);
     }
   };
@@ -89,7 +131,7 @@ const DogItem = (props) => {
         setProfilePic(response);
       }
     });
-    //TODO: send the photo the server
+    //TODO: send the photo to the server
   };
   const removePhoto = () => {
     setProfilePic(defaultProfilePic);
@@ -119,7 +161,8 @@ const DogItem = (props) => {
   };
 
   return (
-    <>
+    <SafeAreaView>
+      
       <View
         style={{
           height: 200,
@@ -133,6 +176,7 @@ const DogItem = (props) => {
           borderRadius: 10,
         }}
       >
+        
         <Swipeable renderRightActions={rightSwipe} overshootRight={false}>
           <TouchableOpacity onPress={showModal}>
             <View style={styles.container}>
@@ -149,6 +193,7 @@ const DogItem = (props) => {
             </View>
           </TouchableOpacity>
         </Swipeable>
+        
       </View>
 
       <Modal
@@ -214,7 +259,7 @@ const DogItem = (props) => {
                     <TextInput
                       style={styles.inputText}
                       placeholder="Name"
-                      placeHolderTextColor={editmode ? "#2B2D42" : "black"}
+                      placeHolderTextColor="black"
                       onChangeText={(e) => editSetName(e)}
                       value={editName}
                       editable={editmode}
@@ -225,6 +270,7 @@ const DogItem = (props) => {
                     <TextInput
                       style={styles.inputbio}
                       placeholder="Bio..."
+                      placeHolderTextColor="red"
                       onChangeText={(e) => editSetBio(e)}
                       value={editBio}
                       editable={editmode}
@@ -316,9 +362,7 @@ const DogItem = (props) => {
                     {editmode ? (
                       <>
                         <View style={styles.buttonView}>
-                          <TouchableOpacity
-                            onPress={() => setshowEditDog(false)}
-                          >
+                          <TouchableOpacity onPress={goback}>
                             <View style={styles.secondaryButton}>
                               <Text
                                 style={{
@@ -329,14 +373,14 @@ const DogItem = (props) => {
                                 }}
                               >
                                 <Ionicons
-                                  name="close"
+                                  name="chevron-back-outline"
                                   size={25}
                                   color="white"
                                 />
                               </Text>
                             </View>
                           </TouchableOpacity>
-                          <TouchableOpacity onPress={editDog}>
+                          <TouchableOpacity onPress={save}>
                             <View style={styles.primaryButton}>
                               <Text
                                 style={{
@@ -359,9 +403,7 @@ const DogItem = (props) => {
                     ) : (
                       <>
                         <View style={styles.buttonView}>
-                          <TouchableOpacity
-                            onPress={() => setshowEditDog(false)}
-                          >
+                          <TouchableOpacity onPress={cancel}>
                             <View style={styles.secondaryButton}>
                               <Text
                                 style={{
@@ -379,7 +421,7 @@ const DogItem = (props) => {
                               </Text>
                             </View>
                           </TouchableOpacity>
-                          <TouchableOpacity onPress={() => setEditmode(true)}>
+                          <TouchableOpacity onPress={edit}>
                             <View style={styles.primaryButton}>
                               <Text
                                 style={{
@@ -407,7 +449,7 @@ const DogItem = (props) => {
           </SafeAreaView>
         </KeyboardAvoidingView>
       </Modal>
-    </>
+    </SafeAreaView>
   );
 };
 

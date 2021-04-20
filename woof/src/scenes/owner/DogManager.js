@@ -23,7 +23,7 @@ import Slider from "@react-native-community/slider";
 import RNPickerSelect from "react-native-picker-select";
 import LinearGradient from "react-native-linear-gradient";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import defaultProfilePic from "../../images/default-profile-with-dog.png";
+import defaultProfilePic from "../../images/dogAvatar.jpg";
 import * as ImagePicker from "react-native-image-picker";
 import { Picker } from "native-base";
 import jwt_decode from "jwt-decode";
@@ -62,7 +62,7 @@ const DogManager = () => {
   // const [editmode, setEditmode] = useState(false);
 
   // // for showing modal
-  const [showEditDog, setshowEditDog] = useState(false);
+  //const [showEditDog, setshowEditDog] = useState(false);
   const [showAddDog, setShowAddDog] = useState(false);
 
   // list of mydogs
@@ -214,13 +214,10 @@ const DogManager = () => {
                 data={item}
                 userId={userId}
                 handleDelete={() => deleteItem(item)}
-                showEditModal={() => showModal()}
+                //showEditModal={() => showModal()}
                 editDogArray={editDogArray}
               />
             );
-          }}
-          ItemSeparatorComponent={() => {
-            return <View style={styles.seperatorLine}></View>;
           }}
         />
         <View style={styles.addButton}>

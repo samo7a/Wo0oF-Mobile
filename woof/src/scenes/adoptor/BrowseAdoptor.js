@@ -18,14 +18,57 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import Icon2 from "react-native-vector-icons/Entypo";
 const Storage = require("../../utilities/TokenStorage");
 const { width } = Dimensions.get("window");
+import jwt_decode from "jwt-decode";
+import Axios from "../../utilities/axios";
 
 const BrowseAdoptor = () => {
   //const [index, setIndex] = useState(0);
   const [cards, setCards] = useState(Dogs);
   const swipe = useRef(new Animated.ValueXY(0)).current;
   const titleSign = useRef(new Animated.Value(1)).current;
+  const [isFlipped, setIsFlipped] = useState(true);
+  const [dogs, setDogs] = useState([]);
 
+  const getDogs = async () => {
+    try {
+      const token = await Storage.load("accessToken");
+      console.log("token : " + token);
+      const userData = await jwt_decode(token, { complete: true });
+      var zip = userData.location;
+      var json = {
+        Location: zip,
+      };
+      try {
+        const response = await Axios.post("/displayDogs", json);
+        console.log("response length should be 5 : " + response.data.length);
+        console.log(response.data);
+        const array = [];
+        for (var i = 0; i < response.data.length; i++) {
+          var obj = {
+            key: response.data[i]._id,
+            name: response.data[i].Name,
+            age: response.data[i].Age,
+            bio: response.data[i].Bio,
+            size: response.data[i].Size,
+            breed: response.data[i].Breed,
+            sex: response.data[i].Sex,
+            isNeutered: response.data[i].isNeutered,
+            isPottyTrained: response.data[i].isPottyTrained,
+          };
+          array.push(obj);
+        }
+        console.log(" array : " + array);
+        setDogs(array);
+        console.log(" myDogs : " + array);
+      } catch (e) {
+        console.log(e);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
   useEffect(() => {
+    getDogs();
     if (!cards.length) {
       setCards(Dogs);
     }
@@ -75,6 +118,10 @@ const BrowseAdoptor = () => {
     console.log(`skip `);
     handleChoice(-1);
   };
+  const info = () => {
+    setIsFlipped(!isFlipped);
+    console.log(isFlipped);
+  };
 
   const removeCard = useCallback(() => {
     setCards((previous) => previous.slice(1));
@@ -84,7 +131,7 @@ const BrowseAdoptor = () => {
   const handleChoice = useCallback(
     (direction) => {
       Animated.timing(swipe.x, {
-        toValue: direction * 3 / 2 * width,
+        toValue: ((direction * 3) / 2) * width,
         duration: 750,
         useNativeDriver: true,
       }).start(removeCard);
@@ -108,7 +155,8 @@ const BrowseAdoptor = () => {
                 weight={item.weight.imperial}
                 breed={item.breed_group}
                 high={item.height.imperial}
-                bio={item.description}
+                bio={item.temperament} //change to bio
+                flip={isFlipped}
                 isFirst={isFirst}
                 swipe={swipe}
                 titleSign={titleSign}
@@ -129,7 +177,16 @@ const BrowseAdoptor = () => {
             />
           </View>
         </TouchableOpacity>
-
+        <TouchableOpacity onPress={() => info()}>
+          <View style={styles.info}>
+            <Icon2
+              name="info"
+              size={35}
+              color="#EDF2F4"
+              style={{ alignSelf: "center" }}
+            />
+          </View>
+        </TouchableOpacity>
         <TouchableOpacity onPress={() => love()}>
           <View style={styles.love}>
             <Icon
@@ -155,7 +212,7 @@ const styles = StyleSheet.create({
     bottom: 15,
     width: 170,
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
     zIndex: -1,
   },
   love: {
@@ -172,6 +229,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     elevation: 2,
     padding: 15,
+    marginHorizontal: 10,
   },
   skip: {
     backgroundColor: "red",
@@ -187,6 +245,23 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     elevation: 2,
     padding: 15,
+    marginHorizontal: 10,
+  },
+  info: {
+    backgroundColor: "#ffcc00",
+    borderRadius: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "black",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowRadius: 6,
+    shadowOpacity: 0.3,
+    elevation: 2,
+    padding: 15,
+    marginHorizontal: 10,
   },
 });
 export default BrowseAdoptor;

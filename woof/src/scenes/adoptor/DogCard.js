@@ -6,14 +6,14 @@ import {
   Text,
   TouchableOpacity,
   Animated,
-  Dimensions
+  Dimensions,
 } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import Choice from "../../components/Choice";
 import Icon from "react-native-vector-icons/FontAwesome";
 import Icon2 from "react-native-vector-icons/Entypo";
-const {height, width } =  Dimensions.get('window');
+const { height, width } = Dimensions.get("window");
 
 const DogCard = ({
   name,
@@ -24,15 +24,16 @@ const DogCard = ({
   breed,
   high,
   bio,
+  flip,
   isFirst,
   swipe,
   titleSign,
   ...rest
 }) => {
-  const [isFlipped, setIsFlipped] = useState(true);
-  const flip = () => {
-    setIsFlipped(isFlipped);
-  };
+  const [flipped, setFlipped] = useState(flip);
+  // const flip = () => {
+  //   setIsFlipped(isFlipped);
+  // };
 
   const rotate = Animated.multiply(swipe.x, titleSign).interpolate({
     inputRange: [-100, 0, 100],
@@ -53,7 +54,9 @@ const DogCard = ({
   const animatedCardStyle = {
     transform: [...swipe.getTranslateTransform(), { rotate }],
   };
-
+  useEffect(() => {
+    setFlipped(flip);
+  }, [flip]);
   const renderChoice = useCallback(() => {
     return (
       <>
@@ -79,64 +82,54 @@ const DogCard = ({
     );
   }, [likeOpacity, nopeOpacity]);
 
-  return isFlipped ? (
-    <>
+  return flipped ? (
     <Animated.View
       style={[styles.container, isFirst && animatedCardStyle]}
       {...rest}
     >
-      <TouchableOpacity onPress={flip}>
-        <Image
-          source={{ uri: imageUri }}
-          style={styles.image}
-          resizeMode="cover"
-        />
-        <LinearGradient
-          colors={["transparent", "rgba(0,0,0,0.9)"]}
-          style={styles.gradient}
-        />
-        <Text style={styles.name}>{`${name}, ${age}`} years old</Text>
-        {isFirst && renderChoice()}
-      </TouchableOpacity>
+      <Image
+        source={{ uri: imageUri }}
+        style={styles.image}
+        resizeMode="cover"
+      />
+      <LinearGradient
+        colors={["transparent", "rgba(0,0,0,0.9)"]}
+        style={styles.gradient}
+      />
+      <Text style={styles.name}>{`${name}, ${age}`} years old</Text>
+      {isFirst && renderChoice()}
     </Animated.View>
-    <View style={styles.buttonView}>
-    <TouchableOpacity onPress={flip}>
-      <View style={styles.skip}>
-        <Icon2
-          name="cross"
-          size={35}
-          color="#EDF2F4"
-          style={{ alignSelf: "center" }}
-        />
-      </View>
-    </TouchableOpacity>
-    </View>
-    </>
   ) : (
-    <TouchableOpacity style={styles.container} onPress={flip}>
-      <View style={styles.des}>
-        <Text style={styles.desText}>Name: {name}</Text>
+    <Animated.View
+      style={[styles.container, animatedCardStyle]}
+      {...rest}
+    >
+      <View style={styles.image}>
+        <View style={styles.des}>
+          <Text style={styles.desText}>Name: {name}</Text>
+        </View>
+        <View style={styles.des}>
+          <Text style={styles.desText}>Breed: {breed}</Text>
+        </View>
+        <View style={styles.des}>
+          <Text style={styles.desText}>Age: {age} years old</Text>
+        </View>
+        <View style={styles.des}>
+          <Text style={styles.desText}>Sex: {sex}</Text>
+        </View>
+        <View style={styles.des}>
+          <Text style={styles.desText}>Weight: {weight} lb.</Text>
+        </View>
+        <View style={styles.des}>
+          <Text style={styles.desText}>Height: {height} in</Text>
+        </View>
+        <View style={[styles.des, {height : 100}]}>
+          <Text style={styles.desText}>Bio: {bio}</Text>
+        </View>
       </View>
-      <View style={styles.des}>
-        <Text style={styles.desText}>Breed: {breed}</Text>
-      </View>
-      <View style={styles.des}>
-        <Text style={styles.desText}>Age: {age} years old</Text>
-      </View>
-      <View style={styles.des}>
-        <Text style={styles.desText}>Sex: {sex}</Text>
-      </View>
-      <View style={styles.des}>
-        <Text style={styles.desText}>Weight: {weight} lb.</Text>
-      </View>
-      <View style={styles.des}>
-        <Text style={styles.desText}>Height: {height} in</Text>
-      </View>
-      <View style={styles.des}>
-        <Text style={styles.desText}>Bio: {bio}</Text>
-      </View>
-    </TouchableOpacity>
-  )
+      {isFirst && renderChoice()}
+    </Animated.View>
+  );
 };
 const styles = StyleSheet.create({
   container: {
@@ -181,11 +174,12 @@ const styles = StyleSheet.create({
   },
   desText: {
     textAlign: "center",
-    fontSize: 20,
+    fontSize: 15,
     color: "white",
     fontFamily: "Avenir",
     textShadowColor: "black",
     textShadowRadius: 10,
+    height : 30,
   },
   des: {
     borderRadius: 10,
