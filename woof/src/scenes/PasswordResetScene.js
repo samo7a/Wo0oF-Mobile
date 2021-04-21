@@ -31,13 +31,14 @@ const PasswordResetScene = () => {
   const [confirmationCode, setConfirmationCode] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+ 
+  
 
   const modalHandler = () => {
     setVisible(!visible);
   };
 
   const resetPassword = async () => {
-    //sent data to the backend
     if (!email) {
       Alert.alert("Empty Email!");
       return;
@@ -47,12 +48,42 @@ const PasswordResetScene = () => {
     };
     try {
       let response = await Axios.post("/resetpassword", json);
-      Alert.alert(response.data.msg);
+      Alert.alert("Email Sent!", response.data.msg, [
+        { text: "OK", onPress: () => modalHandler() },
+      ]);
     } catch (e) {
-      Alert.alert(e);
+      Alert.alert("Technical Error, please try again later!");
+      history.push("/login");
     }
   };
-  const confirmPassord = () => {
+  const confirmPassord = async () => {
+    if (password === "" || confirmPassord === "") {
+      Alert.alert("Please Enter a new Password and Confirm it!");
+      return;
+    }
+    if (password !== confirmPassword) {
+      Alert.alert("The 2 Passwords should match!");
+      return;
+    }
+    try {
+      let json = {
+        resetToken: confirmationCode,
+        newPassword: password,
+      };
+      let response = await Axios.post("/confirmResetPassword", json);
+      Alert.alert(" ", response.data.msg, [
+        {
+          text: "OK",
+          onPress: () => {
+            modalHandler();
+            history.push("/login");
+          },
+        },
+      ]);
+    } catch (e) {
+      console.log(e);
+      Alert.alert("Technical Error, Please Try Again!");
+    }
     modalHandler();
     history.push("/login");
   };
@@ -85,6 +116,7 @@ const PasswordResetScene = () => {
                 value={email}
                 backgroundColor="white"
                 keyboardType="email-address"
+                autoCapitalize="none"
               />
               <TouchableOpacity onPress={resetPassword}>
                 <View style={styles.button}>
