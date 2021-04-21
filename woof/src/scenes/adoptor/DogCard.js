@@ -100,32 +100,29 @@ const DogCard = ({
       {isFirst && renderChoice()}
     </Animated.View>
   ) : (
-    <Animated.View
-      style={[styles.container, animatedCardStyle]}
-      {...rest}
-    >
-      <View style={styles.image}>
-        <View style={styles.des}>
-          <Text style={styles.desText}>Name: {name}</Text>
-        </View>
-        <View style={styles.des}>
-          <Text style={styles.desText}>Breed: {breed}</Text>
-        </View>
-        <View style={styles.des}>
-          <Text style={styles.desText}>Age: {age} years old</Text>
-        </View>
-        <View style={styles.des}>
-          <Text style={styles.desText}>Sex: {sex}</Text>
-        </View>
-        <View style={styles.des}>
-          <Text style={styles.desText}>Weight: {weight} lb.</Text>
-        </View>
-        <View style={styles.des}>
-          <Text style={styles.desText}>Height: {height} in</Text>
-        </View>
-        <View style={[styles.des, {height : 100}]}>
-          <Text style={styles.desText}>Bio: {bio}</Text>
-        </View>
+    <Animated.View style={[styles.container, animatedCardStyle]} {...rest}>
+      <View style={styles.info}>
+        {/* <View style={styles.des}> */}
+        <Text style={styles.desText}>Name: {name}</Text>
+        {/* </View> */}
+        {/* <View style={styles.des}> */}
+        <Text style={styles.desText}>Breed: {breed}</Text>
+        {/* </View> */}
+        {/* <View style={styles.des}> */}
+        <Text style={styles.desText}>Age: {age} years old</Text>
+        {/* </View> */}
+        {/* <View style={styles.des}> */}
+        <Text style={styles.desText}>Sex: {sex}</Text>
+        {/* </View> */}
+        {/* <View style={styles.des}> */}
+        <Text style={styles.desText}>Weight: {weight} lb.</Text>
+        {/* </View> */}
+        {/* <View style={styles.des}> */}
+        <Text style={styles.desText}>Height: {height} in</Text>
+        {/* </View> */}
+        {/* <View style={styles.bio}> */}
+        <Text style={styles.bio}>Bio: {bio}</Text>
+        {/* </View> */}
       </View>
       {isFirst && renderChoice()}
     </Animated.View>
@@ -179,8 +176,18 @@ const styles = StyleSheet.create({
     fontFamily: "Avenir",
     textShadowColor: "black",
     textShadowRadius: 10,
-    height : 30,
+    height: 40,
   },
+  bio: {
+    textAlign: "center",
+    fontSize: 15,
+    color: "white",
+    fontFamily: "Avenir",
+    textShadowColor: "black",
+    textShadowRadius: 10,
+    height: 150,
+  },
+
   des: {
     borderRadius: 10,
     padding: 10,
@@ -197,35 +204,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     elevation: 2,
   },
-  love: {
-    backgroundColor: "green",
-    borderRadius: 50,
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: "black",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowRadius: 6,
-    shadowOpacity: 0.3,
-    elevation: 2,
-    padding: 15,
-  },
-  skip: {
-    backgroundColor: "red",
-    borderRadius: 50,
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: "black",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowRadius: 6,
-    shadowOpacity: 0.3,
-    elevation: 2,
-    padding: 15,
+  info: {
+    borderRadius: 20,
+    width: width * 0.85,
+    height: height * 0.7,
+    backgroundColor: "#202231",
+    padding: 40,
   },
 });
 export default DogCard;
