@@ -104,9 +104,11 @@ const DogManager = () => {
         console.log(" myDogs : " + array);
       } catch (e) {
         console.log(e);
+        Alert.alert("Technical Error, Please Try again!");
       }
     } catch (e) {
-      console.warn(e);
+      console.log(e);
+      Alert.alert("Technical Error, Please Try again!");
     }
   }
   useEffect(() => {

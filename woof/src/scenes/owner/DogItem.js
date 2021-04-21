@@ -16,6 +16,7 @@ import {
   FlatList,
   Dimensions,
   Image,
+  Alert,
 } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Swipeable from "react-native-gesture-handler/Swipeable";
@@ -118,6 +119,7 @@ const DogItem = (props) => {
     } catch (e) {
       setEditmode(false);
       hideModal();
+      Alert.alert("Technical Error, Please Try again!");
       console.log(e);
     }
   };

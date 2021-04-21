@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   TextInput,
   KeyboardAvoidingView,
+  Alert,
 } from "react-native";
 import { useHistory } from "react-router-native";
 import LinearGradient from "react-native-linear-gradient";
@@ -61,6 +62,7 @@ const LoginScene = () => {
     };
     const onFailure = (error) => {
       console.log(error);
+      Alert.alert("Technical Error, Please Try again!");
       setIsLoading(false);
     };
     await Axios.post("/login", json)

@@ -10,6 +10,7 @@ import {
   TextInput,
   KeyboardAvoidingView,
   ScrollView,
+  Alert,
 } from "react-native";
 import { useHistory } from "react-router-native";
 import LinearGradient from "react-native-linear-gradient";
@@ -59,7 +60,9 @@ const Profile = () => {
         setIsOwner(data.isOwner);
         console.log(data);
       } catch (e) {
-        console.warn(e);
+        console.log(e);
+        Alert.alert("Technical Error! Reloading ...");
+        getInfo();
       }
     }
     getInfo();
@@ -107,7 +110,8 @@ const Profile = () => {
       setPhone(data.phone);
       setEmail(data.email);
     } catch (e) {
-      console.warn(e);
+      console.log(e);
+      Alert.alert("Technical Error!");
     }
     setEditmode(false);
   };
@@ -132,7 +136,7 @@ const Profile = () => {
       .then(async function (response) {
         var token = response.data.accessToken;
         if (token.error) {
-          console.warn("token.error = " + token.error);
+          console.log("token.error = " + token.error);
           setIsLoading(false);
           setEditmode(false);
         } else {
@@ -151,7 +155,8 @@ const Profile = () => {
         }
       })
       .catch((e) => {
-        console.warn("e = " + e);
+        console.log("e = " + e);
+        Alert.alert("Technical Error!");
         cancel();
         setIsLoading(false);
       });
@@ -162,7 +167,7 @@ const Profile = () => {
       await Storage.save("isLoggedIn", "false");
       await Storage.remove("accessToken");
     } catch (e) {
-      alert(e);
+      Alert.alert(e);
     }
     history.push("/login");
   };
