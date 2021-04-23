@@ -34,6 +34,7 @@ const ChatList = ({ navigation }) => {
 
   */
   const [chatItem, setChatItem] = useState([]);
+
   useEffect(() => {
     const getInfo = async () => {
       try {
@@ -43,57 +44,26 @@ const ChatList = ({ navigation }) => {
         const id = user.userId;
         console.log(id);
         setUserId(id);
+        try {
+          var obj = {
+            id: userId,
+          };
+          console.log("obj : " + JSON.stringify(obj));
+          let response = await Axios.post("/getLikedDogs", obj);
+          let res = response.data;
+          console.log("array of liked dogs: " + JSON.stringify(res));
+          setChatItem(res);
+        } catch (e) {
+          Alert.alert(e.toString());
+        }
       } catch (e) {
         Alert.alert(e.toString());
       }
     };
     getInfo();
-    getChats();
+    //getChats();
   }, []);
-  const getChats = async () => {
-    var obj = {
-      id: userId,
-    };
 
-    try {
-      let response = await Axios.post("/getChats", obj);
-      let res = response.data;
-      console.log(JSON.stringify(res));
-      setChatItem(res);
-    } catch (e) {
-      Alert.alert(e.toString());
-    }
-
-    // try {
-    //   // Axios code follows
-    //   var config = {
-    //     method: "post",
-    //     url: bp.buildPath("getChats"),
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-
-    //     data: js,
-    //   };
-
-    //   axios(config)
-    //     .then(function (response) {
-    //       var res = response.data;
-
-    //       if (res.error) {
-    //         console.log(res);
-    //       } else {
-    //         setChatItem(res);
-    //       }
-    //     })
-    //     .catch(function (error) {
-    //       // setMessage(error);
-    //     });
-    // } catch (e) {
-    //   alert(e.toString());
-    //   return;
-    // }
-  };
   const Item = ({ name, avatar }) => (
     <View style={styles.chatItem}>
       <Image source={{ uri: avatar }} />
@@ -110,10 +80,10 @@ const ChatList = ({ navigation }) => {
               navigation.navigate("ChatScene", item);
             }}
           >
-            <Item name={item.name} avatar={item.avatar} />
+            <Item name={item.Name} avatar={item.avatar} />
           </TouchableOpacity>
         )}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item._id.toString()}
       />
     </SafeAreaView>
   );

@@ -11,6 +11,7 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   Alert,
+  StyleSheet,
 } from "react-native";
 import { useHistory } from "react-router-native";
 import LinearGradient from "react-native-linear-gradient";
@@ -23,6 +24,7 @@ import Axios, { setClientToken } from "../utilities/axios";
 import * as ImagePicker from "react-native-image-picker";
 import jwt_decode from "jwt-decode";
 import Loader from "../components/Loader";
+import { UploadImage } from "../utilities/UploadImage";
 const Storage = require("../utilities/TokenStorage");
 
 const Profile = () => {
@@ -33,7 +35,7 @@ const Profile = () => {
   const bioRef = useRef();
 
   const [id, setId] = useState("");
-  const [profilePic, setProfilePic] = useState(defaultProfilePic);
+  const [profilePic, setProfilePic] = useState();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -49,8 +51,8 @@ const Profile = () => {
     async function getInfo() {
       try {
         const token = await Storage.load("accessToken");
-        const data = jwt_decode(token, { complete: true });
-        setId(data.userId);
+        const data = await jwt_decode(token, { complete: true });
+
         setBio(data.bio);
         setAddress(data.location);
         setFirstName(data.firstName);
@@ -58,12 +60,13 @@ const Profile = () => {
         setPhone(data.phone);
         setEmail(data.email);
         setIsOwner(data.isOwner);
-        setProfilePic({ uri: `http://localhost:5000/getSingleImage/6073a454f8a2210015e41906` });
-        console.log(data);
+        setId(data.userId);
+        //setProfilePic({ uri: `https://wo0of.s3.amazonaws.com/${id}` });
+        console.log("data : "  + JSON.stringify(data));
       } catch (e) {
         console.log(e);
         Alert.alert("Technical Error! Reloading ...");
-        getInfo();
+        //getInfo();
       }
     }
     getInfo();
@@ -96,41 +99,7 @@ const Profile = () => {
           response.fileName ||
           response.uri.substr(response.uri.lastIndexOf("/" + 1)),
       };
-      var formData = new FormData();
-      formData.append("file", img);
-      try {
-        var config = {
-          method: "post",
-          url: "https://wo0of.herokuapp.com/profilePicture",
-          headers: {
-            "Content-Type": "multipart/form-data",
-            userid: id,
-          },
-
-          data: formData,
-        };
-        Axios(config)
-          .then(function (response1) {
-            var res = response1.data;
-            if (res.error) {
-              console.log(res);
-            } else {
-              setProfilePic({
-                uri: `http://localhost:5000/getSingleImage/6073a454f8a2210015e41906`,
-              });
-              console.log(JSON.stringify(profilePic));
-              console.log("Response: " + JSON.stringify(res));
-            }
-          })
-          .catch(function (error) {
-            // setMessage(error);
-            console.log(error);
-            Alert.alert(error.toString());
-          });
-      } catch (e) {
-        Alert.alert(e.toString());
-        return;
-      }
+      UploadImage(img, id);
     });
   };
   const removePhoto = () => {
@@ -232,10 +201,9 @@ const Profile = () => {
                   >
                     <Image
                       style={styles.photo}
-                      source={{
-                        uri:
-                        "https://source.unsplash.com/random",
-                      }}
+                      source={
+                         'https://wo0of.s3.amazonaws.com/' + id
+                      }
                     />
                     <Text
                       style={{
@@ -245,7 +213,8 @@ const Profile = () => {
                         textAlign: "center",
                       }}
                     >
-                      Upload Profile Picture
+                      {/* Upload Profile Picture */}
+                      `https://wo0of.s3.amazonaws.com/{id}`
                     </Text>
                   </View>
                 </TouchableOpacity>

@@ -8,7 +8,7 @@ import {
   Animated,
   PanResponder,
   Dimensions,
-  Alert
+  Alert,
 } from "react-native";
 
 import { useHistory, withRouter } from "react-router";
@@ -36,8 +36,10 @@ const BrowseAdoptor = () => {
       console.log("token : " + token);
       const userData = await jwt_decode(token, { complete: true });
       var zip = userData.location;
+      var userId = userData.userId;
       var json = {
         Location: zip,
+        id: userId,
       };
       try {
         const response = await Axios.post("/displayDogs", json);
