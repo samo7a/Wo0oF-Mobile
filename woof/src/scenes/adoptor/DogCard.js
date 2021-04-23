@@ -22,7 +22,7 @@ const DogCard = ({
   age,
   weight,
   breed,
-  high,
+  size,
   bio,
   flip,
   isFirst,
@@ -112,10 +112,10 @@ const DogCard = ({
         <Text style={styles.desText}>Age: {age} years old</Text>
         {/* </View> */}
         {/* <View style={styles.des}> */}
-        <Text style={styles.desText}>Sex: {sex}</Text>
+        <Text style={styles.desText}>Sex: {sex}.</Text>
         {/* </View> */}
         {/* <View style={styles.des}> */}
-        <Text style={styles.desText}>Weight: {weight} lb.</Text>
+        <Text style={styles.desText}>Size: {size}.</Text>
         {/* </View> */}
         {/* <View style={styles.des}> */}
         <Text style={styles.desText}>Height: {height} in</Text>

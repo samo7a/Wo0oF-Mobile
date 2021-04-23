@@ -58,6 +58,7 @@ const Profile = () => {
         setPhone(data.phone);
         setEmail(data.email);
         setIsOwner(data.isOwner);
+        setProfilePic({ uri: `http://localhost:5000/getSingleImage/6073a454f8a2210015e41906` });
         console.log(data);
       } catch (e) {
         console.log(e);
@@ -67,20 +68,25 @@ const Profile = () => {
     }
     getInfo();
   }, []);
-  const choosePhoto = () => {
+  const choosePhoto = async () => {
     const options = {
       noData: true,
       mediaType: "photo",
     };
-    ImagePicker.launchImageLibrary(options, (response) => {
+    ImagePicker.launchImageLibrary(options, async (response) => {
       if (response.didCancel) return;
-      console.log(response.type);
-      console.log(response.fileName);
-      console.log(response.fileSize);
-      console.log(response.height);
-      console.log(response.width);
+      console.log("Type : " + response.type);
+      console.log("fileName : " + response.fileName);
+      console.log("fileSize : " + response.fileSize);
+      console.log("height : " + response.height);
+      console.log("width : " + response.width);
+      console.log("uri : " + response.uri);
+      console.log("errorcode : " + response.errorCode);
+      console.log("errormsg : " + response.errorMessage);
+
       if (response.uri) {
-        setProfilePic(response);
+        //setProfilePic({response});
+        console.log("profile pic: " + JSON.stringify(profilePic));
       }
 
       const img = {
@@ -90,8 +96,42 @@ const Profile = () => {
           response.fileName ||
           response.uri.substr(response.uri.lastIndexOf("/" + 1)),
       };
+      var formData = new FormData();
+      formData.append("file", img);
+      try {
+        var config = {
+          method: "post",
+          url: "https://wo0of.herokuapp.com/profilePicture",
+          headers: {
+            "Content-Type": "multipart/form-data",
+            userid: id,
+          },
+
+          data: formData,
+        };
+        Axios(config)
+          .then(function (response1) {
+            var res = response1.data;
+            if (res.error) {
+              console.log(res);
+            } else {
+              setProfilePic({
+                uri: `http://localhost:5000/getSingleImage/6073a454f8a2210015e41906`,
+              });
+              console.log(JSON.stringify(profilePic));
+              console.log("Response: " + JSON.stringify(res));
+            }
+          })
+          .catch(function (error) {
+            // setMessage(error);
+            console.log(error);
+            Alert.alert(error.toString());
+          });
+      } catch (e) {
+        Alert.alert(e.toString());
+        return;
+      }
     });
-    //TODO: send the photo the server
   };
   const removePhoto = () => {
     setProfilePic(defaultProfilePic);
@@ -190,7 +230,13 @@ const Profile = () => {
                       alignItems: "center",
                     }}
                   >
-                    <Image style={styles.photo} source={profilePic} />
+                    <Image
+                      style={styles.photo}
+                      source={{
+                        uri:
+                        "https://source.unsplash.com/random",
+                      }}
+                    />
                     <Text
                       style={{
                         color: "white",

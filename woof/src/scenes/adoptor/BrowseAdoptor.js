@@ -8,11 +8,12 @@ import {
   Animated,
   PanResponder,
   Dimensions,
+  Alert
 } from "react-native";
 
 import { useHistory, withRouter } from "react-router";
 import DogCard from "./DogCard";
-import Dogs from "../../components/Dogs";
+//import Dogs from "../../components/Dogs";
 
 import Icon from "react-native-vector-icons/FontAwesome";
 import Icon2 from "react-native-vector-icons/Entypo";
@@ -23,7 +24,7 @@ import Axios from "../../utilities/axios";
 
 const BrowseAdoptor = () => {
   //const [index, setIndex] = useState(0);
-  const [cards, setCards] = useState(Dogs);
+  //const [cards, setCards] = useState(Dogs);
   const swipe = useRef(new Animated.ValueXY(0)).current;
   const titleSign = useRef(new Animated.Value(1)).current;
   const [isFlipped, setIsFlipped] = useState(true);
@@ -54,27 +55,32 @@ const BrowseAdoptor = () => {
             sex: response.data[i].Sex,
             isNeutered: response.data[i].isNeutered,
             isPottyTrained: response.data[i].isPottyTrained,
+            ownerId: response.data[i].OwnerID,
           };
           array.push(obj);
         }
         console.log(" array : " + array);
-        setDogs(array);
+        if (!dogs.length) {
+          setDogs(array);
+        }
+
         console.log(" myDogs : " + array);
       } catch (e) {
         console.log(e);
-        Alert.alert("Technical Error, Please Try again!");
+        Alert.alert("Technical Error, Please Try !");
       }
     } catch (e) {
       console.log(e);
-      Alert.alert("Technical Error, Please Try again!");
+      Alert.alert("Technical Error, Please  again!");
     }
   };
   useEffect(() => {
     getDogs();
-    if (!cards.length) {
-      setCards(Dogs);
-    }
-  }, [cards.length]);
+    // if (!dogs.length) {
+    //   // setCards(Dogs);
+    //   setDogs(dogs)
+    // }
+  }, [dogs.length]);
   const panResponder = PanResponder.create({
     onMoveShouldSetPanResponder: () => {
       console.log("onmoveshouldsetpanresoponder");
@@ -126,7 +132,7 @@ const BrowseAdoptor = () => {
   };
 
   const removeCard = useCallback(() => {
-    setCards((previous) => previous.slice(1));
+    setDogs((previous) => previous.slice(1));
     swipe.setValue({ x: 0, y: 0 });
   }, [swipe]);
 
@@ -143,21 +149,20 @@ const BrowseAdoptor = () => {
   return (
     <View style={styles.container}>
       <View style={[styles.container]}>
-        {cards
+        {dogs
           .map((item, index) => {
             const isFirst = index === 0;
             const dragHandlers = isFirst ? panResponder.panHandlers : {};
             return (
               <DogCard
-                key={item.id}
+                key={item.key}
                 name={item.name}
-                sex="F"
-                imageUri={item.image.url}
-                age={item.life_span.charAt(0)}
-                weight={item.weight.imperial}
-                breed={item.breed_group}
-                high={item.height.imperial}
-                bio={item.temperament} //change to bio
+                sex={item.sex}
+                imageUri={"https://source.unsplash.com/random"} // /change to real uri
+                age={item.age}
+                breed={item.breed}
+                size={item.size}
+                bio={item.bio}
                 flip={isFlipped}
                 isFirst={isFirst}
                 swipe={swipe}

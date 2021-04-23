@@ -29,7 +29,6 @@ const LoginScene = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
- 
 
   useEffect(() => {
     async function checkLogin() {
@@ -60,11 +59,15 @@ const LoginScene = () => {
       Email: email,
       Password: password,
     };
-    const onFailure = (error) => {
-      console.log(error);
-      Alert.alert("Technical Error, Please Try again!");
-      setIsLoading(false);
-    };
+    // const onFailure = (error) => {
+    //   console.log(12);
+    //   console.log(error);
+    //   console.log(13);
+    //   Alert.alert("Technical Error, Please Try again!");
+    //   console.log(14);
+    //   setIsLoading(false);
+    //   console.log(15);
+    // };
     await Axios.post("/login", json)
       .then(async function (response) {
         var res = response.data.accessToken;
@@ -82,7 +85,11 @@ const LoginScene = () => {
           }
         }
       })
-      .catch(onFailure);
+      .catch((e) => {
+        console.log("error : " + e);
+        Alert.alert("Wrong Email or Password!", "Please try again.");
+        setIsLoading(false);
+      });
   };
 
   return (
@@ -122,7 +129,7 @@ const LoginScene = () => {
                   textContentType="password"
                   keyboardType="default"
                 />
-                
+
                 <TouchableOpacity onPress={loginHandler}>
                   <View style={styles.primaryButton}>
                     <Text
