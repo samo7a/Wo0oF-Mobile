@@ -201,9 +201,9 @@ const Profile = () => {
                   >
                     <Image
                       style={styles.photo}
-                      source={
+                      source={{ uri : 
                          'https://wo0of.s3.amazonaws.com/' + id
-                      }
+                      }}
                     />
                     <Text
                       style={{
