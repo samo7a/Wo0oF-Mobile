@@ -4,7 +4,7 @@ import { GiftedChat } from "react-native-gifted-chat";
 const ChatScene = ({ route, navigation }) => {
   const [messages, setMessages] = useState([]);
   const { id, name } = route.params;
-  useEffect(() => {
+  useEffect(() => { 
     setMessages([
       {
         _id: 1,

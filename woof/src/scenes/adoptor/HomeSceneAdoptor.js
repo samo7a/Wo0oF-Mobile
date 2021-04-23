@@ -8,6 +8,7 @@ import MIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import ChatStack from "../chat/ChatStack";
 import BrowseAdoptor from "./BrowseAdoptor";
 import Profile from "../Profile";
+import LikedDogs from './LikedDogs'
 
 const Tab = createBottomTabNavigator();
 
@@ -34,6 +35,9 @@ const HomeSceneAdoptor = () => {
             } else if (route.name === "Chats") {
               iconName = focused ? "chatbubble" : "chatbubble-outline";
               return <IonIcon name={iconName} size={size} color={color} />;
+            } else if ( route.name === "Liked Dogs") {
+              iconName = focused ? "heart-sharp" : "heart-outline";
+              return <IonIcon name={iconName} size={size} color={color} />;
             }
           },
         })}
@@ -44,6 +48,7 @@ const HomeSceneAdoptor = () => {
       >
         <Tab.Screen name="Profile" component={Profile} />
         <Tab.Screen name="Browse" title="Dogs" component={BrowseAdoptor} />
+        <Tab.Screen name="Liked Dogs" component={LikedDogs} />
         <Tab.Screen
           name="Chats"
           component={ChatStack}
