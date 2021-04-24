@@ -25,7 +25,7 @@ import * as ImagePicker from "react-native-image-picker";
 import jwt_decode from "jwt-decode";
 import Loader from "../components/Loader";
 import UploadImage from "../utilities/UploadImage";
-import { RNS3 } from "react-native-aws3";
+
 const Storage = require("../utilities/TokenStorage");
 
 const Profile = () => {
@@ -47,15 +47,15 @@ const Profile = () => {
   const history = useHistory();
   const [editmode, setEditmode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  // const [imageurl, setimageurl] =
-  const [uploadSuccessMessage, setUploadSuccessMessage] = useState("");
+  const [imageurl, setimageurl] = useState();
+  const [date, setdate] = useState("");
 
   useEffect(() => {
     async function getInfo() {
       try {
         const token = await Storage.load("accessToken");
         const data = await jwt_decode(token, { complete: true });
-
+        setId(data.userId);
         setBio(data.bio);
         setAddress(data.location);
         setFirstName(data.firstName);
@@ -63,13 +63,11 @@ const Profile = () => {
         setPhone(data.phone);
         setEmail(data.email);
         setIsOwner(data.isOwner);
-        setId(data.userId);
-        //setProfilePic({ uri: `https://wo0of.s3.amazonaws.com/${id}` });
-        console.log("data : " + JSON.stringify(data));
+        setdate(Date.now().toString());
+        setimageurl(`https://wo0of.s3.amazonaws.com/${data.userId}`);
       } catch (e) {
         console.log(e);
-        Alert.alert("Technical Error! Reloading ...");
-        //getInfo();
+        Alert.alert("Technical Error! Reloading ...", e.toString());
       }
     }
     getInfo();
@@ -81,72 +79,16 @@ const Profile = () => {
     };
     ImagePicker.launchImageLibrary(options, async (response) => {
       if (response.didCancel) return;
-      console.log("Type : " + response.type);
-      console.log("fileName : " + response.fileName);
-      console.log("fileSize : " + response.fileSize);
-      console.log("height : " + response.height);
-      console.log("width : " + response.width);
-      console.log("uri : " + response.uri);
-      console.log("errorcode : " + response.errorCode);
-      console.log("errormsg : " + response.errorMessage);
-      let source = { uri: response.uri };
-      // const img = {
-      //   size: response.size,
-      //   uri: response.uri,
-      //   type: response.type,
-      //   name: response.fileName,
-      // };
-      console.log("response : " + JSON.stringify(response));
-      RNS3.put(
-        {
-          uri: response.uri,
-          name: id,
-          type: response.type,
-        },
-        {
-          bucket: "wo0of", // Ex. aboutreact
-          region: "us-east-1", // Ex. ap-south-1
-          accessKey: "AKIA5GXICN4MT7PM7ZNX",
-          // Ex. AKIH73GS7S7C53M46OQ
-          secretKey: "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",
-          // Ex. Pt/2hdyro977ejd/h2u8n939nh89nfdnf8hd8f8fd
-          successActionStatus: 201,
-        }
-      )
-        .progress((progress) =>
-          setUploadSuccessMessage(
-            `Uploading: ${progress.loaded / progress.total} (${
-              progress.percent
-            }%)`
-          )
-        )
-        .then((response1) => {
-          if (response1.status !== 201) Alert.alert("Failed to upload profile picture!");
-          console.log(response1.body);
-          let { bucket, etag, key, location } = response1.body.postResponse;
-          setUploadSuccessMessage(
-            `Uploaded Successfully: 
-            \n1. bucket => ${bucket}
-            \n2. etag => ${etag}
-            \n3. key => ${key}
-            \n4. location => ${location}`
-          );
-          /**
-           * {
-           *   postResponse: {
-           *     bucket: "your-bucket",
-           *     etag : "9f620878e06d28774406017480a59fd4",
-           *     key: "uploads/image.png",
-           *     location: "https://bucket.s3.amazonaws.com/**.png"
-           *   }
-           * }
-           */
-        });
+      await UploadImage(response, id)
+        .then(async (url) => {
+          //setdate(Date.now().toString());
+          setimageurl(null);
+          setimageurl("");
+          setimageurl(`https://wo0of.s3.amazonaws.com/${id}`);
+          setdate(Date.now().toString());
+        })
+        .catch((e) => Alert.alert("Failed to upload, Please try again!"));
     });
-  };
-  const removePhoto = () => {
-    //setProfilePic(defaultProfilePic);
-    //TODO: send the profile pic to the server.
   };
 
   const cancel = async () => {
@@ -241,14 +183,15 @@ const Profile = () => {
                     }}
                   >
                     <Image
+                      key={date}
                       style={styles.photo}
-                      //https://wo0of.s3.amazonaws.com/${userID}
-                      source={{
-                        uri: `https://wo0of.s3.amazonaws.com/${id}` + '?' + new Date(),
-                        cache: "reload",
-                      }}
-                      // source={{ uri: "https://picsum.photos/200/300"}}
-                      key={Math.random()}
+                      source={
+                        imageurl
+                          ? {
+                              uri: imageurl + "?" + date,
+                            }
+                          : require("../images/default-profile-with-dog.png")
+                      }
                     />
                     <Text
                       style={{
@@ -259,23 +202,6 @@ const Profile = () => {
                       }}
                     >
                       Upload Profile Picture
-                      {/* `https://wo0of.s3.amazonaws.com/{id}` */}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={removePhoto} style={styles.button}>
-                  <View
-                    style={{ justifyContent: "center", alignItems: "center" }}
-                  >
-                    <Text
-                      style={{
-                        color: "white",
-                        alignSelf: "center",
-                        textAlign: "center",
-                        padding: 5,
-                      }}
-                    >
-                      Remove Photo
                     </Text>
                   </View>
                 </TouchableOpacity>
