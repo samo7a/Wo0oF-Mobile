@@ -69,24 +69,30 @@ const LikedDogs = () => {
 
   const Item = ({ name, avatar }) => (
     <View style={styles.dog}>
-      <Image source={{ uri: avatar }} style={styles.avatar} />
-      <Text style={styles.title}>{name}</Text>
+      <Image
+        key={Date.now().toString()}
+        source={{ uri: avatar }}
+        style={styles.avatar}
+      />
+      <Text style={styles.text}>{name}</Text>
     </View>
   );
   return (
     <SafeAreaView>
       <Text style={styles.title}>Liked Dogs</Text>
       <FlatList
+      style={{marginBottom : 100}}
         data={dogs}
         renderItem={({ item }) => (
-          <TouchableOpacity
-            onPress={() => {
-              history.push('/chat');
-            }}
-          >
+          <TouchableOpacity onPress={() => {}}>
             <Item
               name={item.Name}
-              avatar={"https://wo0of.s3.amazonaws.com/" + item._id}
+              avatar={
+                "https://wo0of.s3.amazonaws.com/" +
+                item._id +
+                "?" +
+                Date.now().toString()
+              }
             />
           </TouchableOpacity>
         )}
@@ -101,6 +107,8 @@ const styles = StyleSheet.create({
     padding: 15,
     backgroundColor: "#E6EDEF",
     borderRadius: 10,
+    flexDirection: "row",
+    alignContent : 'center',
   },
   avatar: {
     height: 75,
@@ -108,7 +116,21 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   title: {
-    fontSize: 40,
+    fontSize: 30,
+    alignSelf: "center",
+    //backgroundColor: "blue",
+    padding: 10,
+    margin: 10,
+    width: 300,
+    justifyContent: "center",
+    alignContent : 'center',
+    alignItems : 'center',
+  },
+  text: {
+    fontSize: 25,
+    marginLeft: 40,
+    alignSelf: "center",
+    justifyContent: "center",
   },
 });
 export default LikedDogs;

@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import React, { useState, useEffect } from "react";
-import Choice from "../../components/Choice";
 import Icon from "react-native-vector-icons/FontAwesome";
 import Icon2 from "react-native-vector-icons/Entypo";
 const { height, width } = Dimensions.get("window");
@@ -22,17 +21,15 @@ const DogCard = ({ dog, removeDogCard }) => {
   const [isFlipped, setFlipped] = useState(false);
   const [userId, setUserId] = useState();
   const flipCard = () => setFlipped(!isFlipped);
-
   useEffect(() => {
     const getInfo = async () => {
       try {
         const token = await Storage.load("accessToken");
-        //console.log("token : " + token);
         const userData = await jwt_decode(token, { complete: true });
         var id = userData.userId;
         setUserId(id);
       } catch (e) {
-        console.log(e);
+        Alert.alert(e.toString());
       }
     };
     getInfo();
@@ -43,13 +40,11 @@ const DogCard = ({ dog, removeDogCard }) => {
       Dog: dog,
       IsLiked: true,
     };
-    console.log("obj : " + JSON.stringify(obj));
-    console.log("userid from like dogs" + userId);
-    removeDogCard(dog._id);
     try {
-      let response = await Axios.post("/likeDog", obj);
-      console.log("response : " + JSON.stringify(response.data));
-    } catch (e) {}
+      await Axios.post("/likeDog", obj);
+    } catch (e) {
+      Alert.alert(e.toString());
+    }
   };
   const skipDog = async () => {
     var obj = {
@@ -58,9 +53,7 @@ const DogCard = ({ dog, removeDogCard }) => {
       IsLiked: false,
     };
     try {
-      let response = await Axios.post("/likeDog", obj);
-      console.log("response from like: ");
-      removeDogCard(dog._id);
+      await Axios.post("/likeDog", obj);
     } catch (e) {
       Alert.alert(e.toString());
     }
@@ -83,7 +76,13 @@ const DogCard = ({ dog, removeDogCard }) => {
           style={styles.container}
         >
           <Image
-            source={{ uri: `https://wo0of.s3.amazonaws.com/${dog._id}` }}
+            key={Date.now().toString()}
+            source={{
+              uri:
+                `https://wo0of.s3.amazonaws.com/${dog._id}` +
+                "?" +
+                Date.now().toString(),
+            }}
             style={styles.image}
             resizeMode="cover"
           />
@@ -92,7 +91,6 @@ const DogCard = ({ dog, removeDogCard }) => {
             style={styles.gradient}
           />
           <Text style={styles.name}>{`${dog.Name}, ${dog.Age}`} years old</Text>
-          {/*isFirst*/}
         </TouchableOpacity>
       ) : (
         <TouchableOpacity
@@ -101,39 +99,31 @@ const DogCard = ({ dog, removeDogCard }) => {
           style={styles.container}
         >
           <View style={styles.info}>
-            {/* <View style={styles.des}> */}
             <Text style={styles.desText}>Name: {dog.Name}</Text>
-            {/* </View> */}
-            {/* <View style={styles.des}> */}
+
             <Text style={styles.desText}>Breed: {dog.Breed}</Text>
-            {/* </View> */}
-            {/* <View style={styles.des}> */}
+
             <Text style={styles.desText}>Age: {dog.Age} years old</Text>
-            {/* </View> */}
-            {/* <View style={styles.des}> */}
+
             <Text style={styles.desText}>Sex: {dog.Sex}.</Text>
-            {/* </View> */}
-            {/* <View style={styles.des}> */}
+
             <Text style={styles.desText}>Size: {dog.Size}.</Text>
-            {/* </View> */}
-            {/* <View style={styles.des}> */}
+
             <Text style={styles.desText}>
               Potty Trained? : {dog.isPottyTrained ? " Yes" : " No"}{" "}
             </Text>
-            {/* </View> */}
+
             <Text style={styles.desText}>
               {" "}
               Neutered?: {dog.isNeutered ? " Yes" : " No"}{" "}
             </Text>
-            {/* <View style={styles.bio}> */}
+
             <Text style={styles.bio}>Bio: {dog.bio}</Text>
-            {/* </View> */}
           </View>
-          {/*isFirst*/}
         </TouchableOpacity>
       )}
       <View style={styles.buttonView}>
-        <TouchableOpacity onPress={() => skipDog()}>
+        <TouchableOpacity onPress={() => handleSkip()}>
           <View style={styles.skip}>
             <Icon2
               name="cross"
@@ -143,7 +133,7 @@ const DogCard = ({ dog, removeDogCard }) => {
             />
           </View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => likeDog()}>
+        <TouchableOpacity onPress={() => handleLike()}>
           <View style={styles.love}>
             <Icon
               name="heart"
@@ -161,6 +151,16 @@ const styles = StyleSheet.create({
   container: {
     position: "absolute",
     top: 15,
+    borderRadius: 20,
+    backgroundColor: "#5D6B83",
+    shadowColor: "black",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowRadius: 6,
+    shadowOpacity: 0.3,
+    elevation: 2,
   },
   name: {
     position: "absolute",
@@ -186,18 +186,7 @@ const styles = StyleSheet.create({
     height: 90,
     borderRadius: 20,
   },
-  choiceContainer: {
-    position: "absolute",
-    top: 25,
-  },
-  likeContainer: {
-    left: 40,
-    transform: [{ rotate: "-30deg" }],
-  },
-  nopeContainer: {
-    right: 25,
-    transform: [{ rotate: "30deg" }],
-  },
+
   desText: {
     textAlign: "center",
     fontSize: 15,
@@ -223,7 +212,6 @@ const styles = StyleSheet.create({
     margin: 1,
     width: "100%",
     alignSelf: "center",
-    backgroundColor: "#2B2D42",
     shadowColor: "black",
     shadowOffset: {
       width: 0,
@@ -237,7 +225,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     width: width * 0.85,
     height: height * 0.7,
-    backgroundColor: "#202231",
     padding: 40,
   },
   buttonView: {

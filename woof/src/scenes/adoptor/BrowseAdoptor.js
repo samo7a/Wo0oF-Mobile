@@ -1,16 +1,14 @@
 import "react-native-gesture-handler";
 import React, { useState, useEffect } from "react";
-import { View, TouchableOpacity, Text, StyleSheet, Alert } from "react-native";
-
+import { View, Text, StyleSheet, Alert, Dimensions, ActivityIndicator } from "react-native";
+import LinearGradient from "react-native-linear-gradient";
 import DogCard from "./DogCard";
-import Icon from "react-native-vector-icons/FontAwesome";
-import Icon2 from "react-native-vector-icons/Entypo";
+const { height, width } = Dimensions.get("window");
 const Storage = require("../../utilities/TokenStorage");
 import jwt_decode from "jwt-decode";
 import Axios from "../../utilities/axios";
 
 const BrowseAdoptor = () => {
-  //const [isFlipped, setIsFlipped] = useState(true);
   const [dogs, setDogs] = useState([]);
   const [userId, setUserId] = useState();
 
@@ -28,35 +26,23 @@ const BrowseAdoptor = () => {
       };
       try {
         const response = await Axios.post("/displayDogs", json);
-        console.log("response length should be 5 : " + response.data.length);
-        console.log(response.data);
         const array = response.data;
         if (!dogs.length) {
           setDogs(array);
         }
-        console.log(" array : " + dogs);
       } catch (e) {
-        console.log(e);
-        Alert.alert("Technical Error, Please Try !");
+        Alert.alert("Technical Error, Please Try agian!", e.toString());
       }
     } catch (e) {
-      console.log(e);
-      Alert.alert("Technical Error, Please  again!");
+      Alert.alert("Technical Error, Please Try again!", e.toString());
     }
   };
   useEffect(() => {
     getDogs();
-    // if (!dogs.length) {
-    //   // setCards(Dogs);
-    //   setDogs(dogs)
-    // }
   }, [dogs.length]);
 
   const removeDogCard = (id) => {
-    console.log("hello");
-    console.log(dogs.length);
     setDogs(dogs.filter((dog) => dog._id !== id));
-    console.log(dogs.length);
   };
 
   return (
@@ -65,13 +51,23 @@ const BrowseAdoptor = () => {
         {dogs.length !== 0 ? (
           dogs.map((dog) => (
             <DogCard key={dog._id} dog={dog} removeDogCard={removeDogCard} />
-          )).reverse()
+          ))
         ) : (
           <>
-            <Text>
-              Sorry there are no more dogs up for adoption in your area Change
-              your search area or come back later.
-            </Text>
+            <LinearGradient
+              colors={["transparent", "rgba(0,0,0,0.9)"]}
+              style={styles.card}
+            >
+              <View style={styles.info}>
+                <Text style={styles.desText}>
+                  Sorry there are no more dogs up for adoption in your area.
+                </Text>
+                <Text style={styles.desText}>
+                Change your search area or come back later....
+                </Text>
+                <ActivityIndicator animating={true} color="#E6EDEF" size="large" style={{marginTop: 35}}/>
+              </View>
+            </LinearGradient>
           </>
         )}
       </View>
@@ -83,6 +79,35 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+  },
+  card: {
+    position: "absolute",
+    top: 15,
+    borderRadius: 20,
+    backgroundColor: "#5D6B83",
+    shadowColor: "black",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowRadius: 6,
+    shadowOpacity: 0.3,
+    elevation: 2,
+  },
+  info: {
+    borderRadius: 20,
+    width: width * 0.85,
+    height: height * 0.7,
+  },
+  desText: {
+    textAlign: "center",
+    fontSize: 15,
+    color: "white",
+    fontFamily: "Avenir",
+    textShadowColor: "black",
+    textShadowRadius: 10,
+    height: 40,
+    margin : 30,
   },
 });
 export default BrowseAdoptor;

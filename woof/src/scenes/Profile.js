@@ -81,9 +81,11 @@ const Profile = () => {
       if (response.didCancel) return;
       await UploadImage(response, id)
         .then(async (url) => {
-          //setdate(Date.now().toString());
-          setimageurl(null);
-          setimageurl("");
+          setdate(Date.now().toString());
+          setTimeout(() => {
+            setimageurl(`https://wo0of.s3.amazonaws.com/${id}?${date}`);
+            setdate(Date.now().toString());
+          }, 2000);
           setimageurl(`https://wo0of.s3.amazonaws.com/${id}`);
           setdate(Date.now().toString());
         })
