@@ -24,7 +24,8 @@ import Axios, { setClientToken } from "../utilities/axios";
 import * as ImagePicker from "react-native-image-picker";
 import jwt_decode from "jwt-decode";
 import Loader from "../components/Loader";
-import { UploadImage } from "../utilities/UploadImage";
+import UploadImage from "../utilities/UploadImage";
+import { RNS3 } from "react-native-aws3";
 const Storage = require("../utilities/TokenStorage");
 
 const Profile = () => {
@@ -35,7 +36,7 @@ const Profile = () => {
   const bioRef = useRef();
 
   const [id, setId] = useState("");
-  const [profilePic, setProfilePic] = useState();
+  //const [profilePic, setProfilePic] = useState();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -46,6 +47,8 @@ const Profile = () => {
   const history = useHistory();
   const [editmode, setEditmode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  // const [imageurl, setimageurl] =
+  const [uploadSuccessMessage, setUploadSuccessMessage] = useState("");
 
   useEffect(() => {
     async function getInfo() {
@@ -62,7 +65,7 @@ const Profile = () => {
         setIsOwner(data.isOwner);
         setId(data.userId);
         //setProfilePic({ uri: `https://wo0of.s3.amazonaws.com/${id}` });
-        console.log("data : "  + JSON.stringify(data));
+        console.log("data : " + JSON.stringify(data));
       } catch (e) {
         console.log(e);
         Alert.alert("Technical Error! Reloading ...");
@@ -86,24 +89,63 @@ const Profile = () => {
       console.log("uri : " + response.uri);
       console.log("errorcode : " + response.errorCode);
       console.log("errormsg : " + response.errorMessage);
-
-      if (response.uri) {
-        //setProfilePic({response});
-        console.log("profile pic: " + JSON.stringify(profilePic));
-      }
-
-      const img = {
-        uri: response.uri,
-        type: response.type,
-        name:
-          response.fileName ||
-          response.uri.substr(response.uri.lastIndexOf("/" + 1)),
-      };
-      UploadImage(img, id);
+      let source = { uri: response.uri };
+      // const img = {
+      //   size: response.size,
+      //   uri: response.uri,
+      //   type: response.type,
+      //   name: response.fileName,
+      // };
+      console.log("response : " + JSON.stringify(response));
+      RNS3.put(
+        {
+          uri: response.uri,
+          name: id,
+          type: response.type,
+        },
+        {
+          bucket: "wo0of", // Ex. aboutreact
+          region: "us-east-1", // Ex. ap-south-1
+          accessKey: "AKIA5GXICN4MT7PM7ZNX",
+          // Ex. AKIH73GS7S7C53M46OQ
+          secretKey: "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",
+          // Ex. Pt/2hdyro977ejd/h2u8n939nh89nfdnf8hd8f8fd
+          successActionStatus: 201,
+        }
+      )
+        .progress((progress) =>
+          setUploadSuccessMessage(
+            `Uploading: ${progress.loaded / progress.total} (${
+              progress.percent
+            }%)`
+          )
+        )
+        .then((response1) => {
+          if (response1.status !== 201) Alert.alert("Failed to upload profile picture!");
+          console.log(response1.body);
+          let { bucket, etag, key, location } = response1.body.postResponse;
+          setUploadSuccessMessage(
+            `Uploaded Successfully: 
+            \n1. bucket => ${bucket}
+            \n2. etag => ${etag}
+            \n3. key => ${key}
+            \n4. location => ${location}`
+          );
+          /**
+           * {
+           *   postResponse: {
+           *     bucket: "your-bucket",
+           *     etag : "9f620878e06d28774406017480a59fd4",
+           *     key: "uploads/image.png",
+           *     location: "https://bucket.s3.amazonaws.com/**.png"
+           *   }
+           * }
+           */
+        });
     });
   };
   const removePhoto = () => {
-    setProfilePic(defaultProfilePic);
+    //setProfilePic(defaultProfilePic);
     //TODO: send the profile pic to the server.
   };
 
@@ -138,7 +180,6 @@ const Profile = () => {
       LastName: lastName,
       Location: address,
       Phone: phone,
-      ProfilePicture: " my profile pic",
       ShortBio: bio,
     };
     await Axios.post("/editUser", json)
@@ -201,9 +242,13 @@ const Profile = () => {
                   >
                     <Image
                       style={styles.photo}
-                      source={{ uri : 
-                         'https://wo0of.s3.amazonaws.com/' + id
+                      //https://wo0of.s3.amazonaws.com/${userID}
+                      source={{
+                        uri: `https://wo0of.s3.amazonaws.com/${id}` + '?' + new Date(),
+                        cache: "reload",
                       }}
+                      // source={{ uri: "https://picsum.photos/200/300"}}
+                      key={Math.random()}
                     />
                     <Text
                       style={{
@@ -213,8 +258,8 @@ const Profile = () => {
                         textAlign: "center",
                       }}
                     >
-                      {/* Upload Profile Picture */}
-                      `https://wo0of.s3.amazonaws.com/{id}`
+                      Upload Profile Picture
+                      {/* `https://wo0of.s3.amazonaws.com/{id}` */}
                     </Text>
                   </View>
                 </TouchableOpacity>
