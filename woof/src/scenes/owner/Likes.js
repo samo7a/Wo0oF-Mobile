@@ -17,13 +17,13 @@ import Axios from "../../utilities/axios";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 const Storage = require("../../utilities/TokenStorage");
 
-const LikedDogs = () => {
+const Likes = () => {
   const [userId, setUserId] = useState("");
   const [nme, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [bio, setBio] = useState("");
-  const [dogs, setDogs] = useState([]);
+  const [likers, setlikers] = useState([]);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -38,10 +38,10 @@ const LikedDogs = () => {
             id: id,
           };
           console.log("obj : " + JSON.stringify(obj));
-          let response = await Axios.post("/getLikedDogs", obj);
+          let response = await Axios.post("/getLikers", obj);
           let res = response.data;
-          console.log("array of liked dogs: " + JSON.stringify(res));
-          setDogs(res);
+          console.log("array of likers " + JSON.stringify(res));
+          setlikers(res);
         } catch (e) {
           Alert.alert(e.toString());
         }
@@ -95,10 +95,10 @@ const LikedDogs = () => {
   };
   return (
     <SafeAreaView>
-      <Text style={styles.title}>Liked Dogs</Text>
+      <Text style={styles.title}>Likers</Text>
       <FlatList
         style={{ marginBottom: 100 }}
-        data={dogs}
+        data={likers}
         renderItem={({ item }) => (
           <TouchableOpacity
             onPress={() => {
@@ -106,7 +106,7 @@ const LikedDogs = () => {
             }}
           >
             <Item
-              name={item.Name}
+              name={item.FirstName + " " + item.LastName}
               avatar={
                 "https://wo0of.s3.amazonaws.com/" +
                 item._id +
@@ -208,4 +208,4 @@ const styles = StyleSheet.create({
     padding: 5,
   },
 });
-export default LikedDogs;
+export default Likes;

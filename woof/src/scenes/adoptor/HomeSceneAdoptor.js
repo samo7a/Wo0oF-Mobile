@@ -4,16 +4,13 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import IonIcon from "react-native-vector-icons/Ionicons";
 import MIcon from "react-native-vector-icons/MaterialCommunityIcons";
-
-import ChatStack from "../chat/ChatStack";
 import BrowseAdoptor from "./BrowseAdoptor";
 import Profile from "../Profile";
-import LikedDogs from './LikedDogs'
+import LikedDogs from "./LikedDogs";
 
 const Tab = createBottomTabNavigator();
 
 const HomeSceneAdoptor = () => {
-  const [noOfMessages] = useState(3);
   return (
     <NavigationContainer>
       <Tab.Navigator
@@ -32,10 +29,7 @@ const HomeSceneAdoptor = () => {
             } else if (route.name === "Browse") {
               iconName = focused ? "paw-sharp" : "ios-paw-outline";
               return <IonIcon name={iconName} size={size} color={color} />;
-            } else if (route.name === "Chats") {
-              iconName = focused ? "chatbubble" : "chatbubble-outline";
-              return <IonIcon name={iconName} size={size} color={color} />;
-            } else if ( route.name === "Liked Dogs") {
+            } else if (route.name === "Liked Dogs") {
               iconName = focused ? "heart-sharp" : "heart-outline";
               return <IonIcon name={iconName} size={size} color={color} />;
             }
@@ -49,13 +43,6 @@ const HomeSceneAdoptor = () => {
         <Tab.Screen name="Profile" component={Profile} />
         <Tab.Screen name="Browse" title="Dogs" component={BrowseAdoptor} />
         <Tab.Screen name="Liked Dogs" component={LikedDogs} />
-        <Tab.Screen
-          name="Chats"
-          component={ChatStack}
-          options={{
-            tabBarBadge: noOfMessages == 0 ? null : noOfMessages,
-          }}
-        />
       </Tab.Navigator>
     </NavigationContainer>
   );

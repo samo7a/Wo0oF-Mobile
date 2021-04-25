@@ -5,14 +5,13 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import IonIcon from "react-native-vector-icons/Ionicons";
 import MIcon from "react-native-vector-icons/MaterialCommunityIcons";
 
-import ChatStack from "../chat/ChatStack";
+import Likes from "../owner/Likes";
 import DogManager from "./DogManager";
 import Profile from "../Profile";
 
 const Tab = createBottomTabNavigator();
 
 const HomeSceneOwner = () => {
-  const [noOfMessages, ] = useState(3);
   return (
     <NavigationContainer>
       <Tab.Navigator
@@ -31,8 +30,8 @@ const HomeSceneOwner = () => {
             } else if (route.name === "Browse") {
               iconName = focused ? "dog-side" : "dog-service";
               return <MIcon name={iconName} size={size} color={color} />;
-            } else if (route.name === "Chats") {
-              iconName = focused ? "chatbubble" : "chatbubble-outline";
+            } else if (route.name === "Likes") {
+              iconName = focused ? "heart-sharp" : "heart-outline";
               return <IonIcon name={iconName} size={size} color={color} />;
             }
           },
@@ -43,14 +42,8 @@ const HomeSceneOwner = () => {
         }}
       >
         <Tab.Screen name="Profile" component={Profile} />
-        <Tab.Screen name="Browse"  component={DogManager} />
-        <Tab.Screen
-          name="Chats"
-          component={ChatStack}
-          options={{
-            tabBarBadge: noOfMessages == 0 ? null : noOfMessages,
-          }}
-        />
+        <Tab.Screen name="Browse" component={DogManager} />
+        <Tab.Screen name="Likes" component={Likes} />
       </Tab.Navigator>
     </NavigationContainer>
   );
