@@ -26,6 +26,7 @@ import Slider from "@react-native-community/slider";
 import RNPickerSelect from "react-native-picker-select";
 import LinearGradient from "react-native-linear-gradient";
 import Axios from "../../utilities/axios";
+import UploadImage from "../../utilities/UploadImage";
 import defaultProfilePic from "../../images/dogAvatar.jpg";
 import * as ImagePicker from "react-native-image-picker";
 import { Picker } from "native-base";
@@ -55,13 +56,19 @@ const DogItem = (props) => {
   const [oldeditIsPottyTrained, oldeditSetIsPottyTrained] = useState(
     props.data.isPottyTrained
   );
-  const [oldeditIsNeutered, oldeditSetIsNeutered] = useState(props.data.isNeutered);
+  const [oldeditIsNeutered, oldeditSetIsNeutered] = useState(
+    props.data.isNeutered
+  );
   const [dogId, setDogId] = useState(props.data.key);
   const [userId, setUserId] = useState(props.userId);
+  const [date, setdate] = useState(Date.now().toString());
+  const [imageurl, setimageurl] = useState(
+    `https://wo0of.s3.amazonaws.com/${dogId}?${date}`
+  );
 
   //const [editDogId, editSDogId] = useState(false);
   const [editmode, setEditmode] = useState(false);
-  const [profilePic, setProfilePic] = useState(defaultProfilePic);
+  //const [profilePic, setProfilePic] = useState(defaultProfilePic);
 
   const showModal = () => {
     setshowEditDog(true);
@@ -115,7 +122,7 @@ const DogItem = (props) => {
       await Axios.post("/editDog", obj);
       props.editDogArray(props.data);
       setEditmode(false);
-      hideModal()
+      hideModal();
     } catch (e) {
       setEditmode(false);
       hideModal();
@@ -123,22 +130,27 @@ const DogItem = (props) => {
       console.log(e);
     }
   };
-  const choosePhoto = () => {
+  const choosePhoto = async () => {
     const options = {
       noData: true,
       mediaType: "photo",
     };
-    ImagePicker.launchImageLibrary(options, (response) => {
-      if (response.uri) {
-        setProfilePic(response);
-      }
+    ImagePicker.launchImageLibrary(options, async (response) => {
+      if (response.didCancel) return;
+      await UploadImage(response, dogId)
+        .then(async (url) => {
+          setdate(Date.now().toString());
+          setTimeout(() => {
+            setimageurl(`https://wo0of.s3.amazonaws.com/${dogId}?${date}`);
+            setdate(Date.now().toString());
+          }, 2000);
+          setimageurl(`https://wo0of.s3.amazonaws.com/${dogId}`);
+          setdate(Date.now().toString());
+        })
+        .catch((e) => Alert.alert("Failed to upload, Please try again!"));
     });
-    //TODO: send the photo to the server
   };
-  const removePhoto = () => {
-    setProfilePic(defaultProfilePic);
-    //TODO: send the profile pic to the server.
-  };
+
   // for showing modal
   const [showEditDog, setshowEditDog] = useState(false);
   const rightSwipe = (progress, dragX) => {
@@ -164,7 +176,6 @@ const DogItem = (props) => {
 
   return (
     <SafeAreaView>
-      
       <View
         style={{
           height: 200,
@@ -178,24 +189,38 @@ const DogItem = (props) => {
           borderRadius: 10,
         }}
       >
-        
         <Swipeable renderRightActions={rightSwipe} overshootRight={false}>
-          <TouchableOpacity onPress={showModal}>
+          <TouchableOpacity activeOpacity={5} onPress={showModal}>
             <View style={styles.container}>
-              <Text>Name: {props.data.name}.</Text>
-              <Text>Age: {props.data.age}.</Text>
-              <Text>Bio: {props.data.bio}.</Text>
-              <Text>Size: {props.data.size}.</Text>
-              <Text>Breed: {props.data.breed}.</Text>
-              <Text>Sex: {props.data.sex}.</Text>
-              <Text>isNeutered: {props.data.isNeutered ? "Yes" : "No"}.</Text>
-              <Text>
-                isPottyTrained: {props.data.isPottyTrained ? "Yes" : "No"}.
+              <Image
+                key={date}
+                style={styles.photo2}
+                source={
+                  imageurl
+                    ? {
+                        uri: imageurl + "?" + date,
+                      }
+                    : require("../../images/dogAvatar.jpg")
+                }
+              />
+              <Text
+                style={{
+                  position: "absolute",
+                  bottom: 10,
+                  left: 15,
+                  fontSize: 30,
+                  color: "white",
+                  textShadowColor: "rgba(0, 0, 0, 0.75)",
+                  textShadowOffset: { width: -1, height: 1 },
+                  textShadowRadius: 10,
+                  elevation: 4,
+                }}
+              >
+                {props.data.name}
               </Text>
             </View>
           </TouchableOpacity>
         </Swipeable>
-        
       </View>
 
       <Modal
@@ -222,7 +247,17 @@ const DogItem = (props) => {
                           alignItems: "center",
                         }}
                       >
-                        <Image style={styles.photo} source={profilePic} />
+                        <Image
+                          key={date}
+                          style={styles.photo}
+                          source={
+                            imageurl
+                              ? {
+                                  uri: imageurl + "?" + date,
+                                }
+                              : require("../../images/dogAvatar.jpg")
+                          }
+                        />
                         <Text
                           style={{
                             color: "white",
@@ -232,28 +267,6 @@ const DogItem = (props) => {
                           }}
                         >
                           Upload Profile Picture
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      onPress={removePhoto}
-                      style={styles.button}
-                    >
-                      <View
-                        style={{
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Text
-                          style={{
-                            color: "white",
-                            alignSelf: "center",
-                            textAlign: "center",
-                            padding: 5,
-                          }}
-                        >
-                          Remove Photo
                         </Text>
                       </View>
                     </TouchableOpacity>
@@ -599,5 +612,13 @@ const styles = StyleSheet.create({
     borderRadius: 75,
     alignSelf: "center",
     justifyContent: "space-evenly",
+  },
+  photo2: {
+    height: 200,
+    width: SCREEN_WIDTH * 0.8,
+    borderRadius: 10,
+    alignSelf: "center",
+    marginTop: 0,
+    //justifyContent: "space-evenly",
   },
 });

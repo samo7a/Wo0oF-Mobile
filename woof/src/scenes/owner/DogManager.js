@@ -196,10 +196,6 @@ const DogManager = () => {
     });
     //TODO: send the photo the server
   };
-  const removePhoto = () => {
-    setProfilePic(defaultProfilePic);
-    //TODO: send the profile pic to the server.
-  };
 
   return (
     <View style={styles.container}>
@@ -262,28 +258,6 @@ const DogManager = () => {
                             }}
                           >
                             Upload Profile Picture
-                          </Text>
-                        </View>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        onPress={removePhoto}
-                        style={styles.button}
-                      >
-                        <View
-                          style={{
-                            justifyContent: "center",
-                            alignItems: "center",
-                          }}
-                        >
-                          <Text
-                            style={{
-                              color: "white",
-                              alignSelf: "center",
-                              textAlign: "center",
-                              padding: 5,
-                            }}
-                          >
-                            Remove Photo
                           </Text>
                         </View>
                       </TouchableOpacity>
