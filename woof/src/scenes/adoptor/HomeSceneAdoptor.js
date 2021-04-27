@@ -1,5 +1,5 @@
 import "react-native-gesture-handler";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import IonIcon from "react-native-vector-icons/Ionicons";
@@ -11,6 +11,13 @@ import LikedDogs from "./LikedDogs";
 const Tab = createBottomTabNavigator();
 
 const HomeSceneAdoptor = () => {
+  const [update, setUpdate] = useState(0);
+
+
+  const [likeUpdate, setLikeUpdate] = useState(update);
+  useEffect(()=>{
+    setLikeUpdate(update);
+  }, [update]);
   return (
     <NavigationContainer>
       <Tab.Navigator
@@ -41,8 +48,8 @@ const HomeSceneAdoptor = () => {
         }}
       >
         <Tab.Screen name="Profile" component={Profile} />
-        <Tab.Screen name="Browse" title="Dogs" component={BrowseAdoptor} />
-        <Tab.Screen name="Liked Dogs" component={LikedDogs} />
+        <Tab.Screen name="Browse" title="Dogs" children={() => <BrowseAdoptor changeUpdate={() => setUpdate(update + 1)}/>} />
+        <Tab.Screen name="Liked Dogs" children={()=><LikedDogs update={likeUpdate}/>}/>
       </Tab.Navigator>
     </NavigationContainer>
   );

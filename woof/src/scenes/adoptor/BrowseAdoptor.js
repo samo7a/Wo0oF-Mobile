@@ -1,6 +1,13 @@
 import "react-native-gesture-handler";
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Alert, Dimensions, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Alert,
+  Dimensions,
+  ActivityIndicator,
+} from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import DogCard from "./DogCard";
 const { height, width } = Dimensions.get("window");
@@ -8,7 +15,7 @@ const Storage = require("../../utilities/TokenStorage");
 import jwt_decode from "jwt-decode";
 import Axios from "../../utilities/axios";
 
-const BrowseAdoptor = () => {
+const BrowseAdoptor = (props) => {
   const [dogs, setDogs] = useState([]);
   const [userId, setUserId] = useState();
 
@@ -42,6 +49,7 @@ const BrowseAdoptor = () => {
   }, [dogs.length]);
 
   const removeDogCard = (id) => {
+    props.changeUpdate();
     setDogs(dogs.filter((dog) => dog._id !== id));
   };
 
@@ -63,9 +71,14 @@ const BrowseAdoptor = () => {
                   Sorry there are no more dogs up for adoption in your area.
                 </Text>
                 <Text style={styles.desText}>
-                Change your search area or come back later....
+                  Change your search area or come back later....
                 </Text>
-                <ActivityIndicator animating={true} color="#E6EDEF" size="large" style={{marginTop: 35}}/>
+                <ActivityIndicator
+                  animating={true}
+                  color="#E6EDEF"
+                  size="large"
+                  style={{ marginTop: 35 }}
+                />
               </View>
             </LinearGradient>
           </>
@@ -107,7 +120,7 @@ const styles = StyleSheet.create({
     textShadowColor: "black",
     textShadowRadius: 10,
     height: 40,
-    margin : 30,
+    margin: 30,
   },
 });
 export default BrowseAdoptor;

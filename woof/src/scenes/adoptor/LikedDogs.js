@@ -17,15 +17,17 @@ import Axios from "../../utilities/axios";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 const Storage = require("../../utilities/TokenStorage");
 import Loader from "../../components/Loader";
-const LikedDogs = () => {
+const LikedDogs = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [userId, setUserId] = useState("");
   const [nme, setName] = useState("");
+  const [imageurl, setimgageurl] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [bio, setBio] = useState("");
   const [dogs, setDogs] = useState([]);
   const [visible, setVisible] = useState(false);
+
 
   useEffect(() => {
     const getInfo = async () => {
@@ -84,9 +86,9 @@ const LikedDogs = () => {
       }
     };
     getInfo();
-  }, []);
+  }, [props.update]);
 
-  const Item = ({ name, avatar }) => (
+  const Item = ({ name, avatar, id }) => (
     <View style={styles.dog}>
       <Image
         key={Date.now().toString()}
@@ -94,6 +96,20 @@ const LikedDogs = () => {
         style={styles.avatar}
       />
       <Text style={styles.text}>{name}</Text>
+      <TouchableOpacity
+        onPress={() => {
+          handleModal(id);
+        }}
+        style={{
+          position: "absolute",
+          right: 15,
+          top: 20,
+          backgroundColor: "#202231",
+          borderRadius: 5,
+        }}
+      >
+        <Icon name="face-profile" size={45} color="white" />
+      </TouchableOpacity>
     </View>
   );
   const hideModal = () => {
@@ -110,10 +126,17 @@ const LikedDogs = () => {
       };
       let response = await Axios.post("/getOwner", obj);
       let res = response.data;
+      console.log(res);
       setName(res.FirstName + " " + res.LastName);
       setEmail(res.Email);
       setPhone(res.Phone);
       setBio(res.ShortBio);
+      setimgageurl(
+        "https://wo0of.s3.amazonaws.com/" +
+          res._id +
+          "?" +
+          Date.now().toString()
+      );
       showModal();
     } catch (e) {
       Alert.alert(e.toString());
@@ -124,30 +147,26 @@ const LikedDogs = () => {
     setPhone("");
     setBio("");
     setEmail("");
+    setimgageurl("");
     hideModal();
   };
   return (
     <SafeAreaView>
-      <Text style={styles.title}>Liked Dogs</Text>
+      <Text style={styles.title}>Likes</Text>
       <FlatList
         style={{ marginBottom: 100 }}
         data={dogs}
         renderItem={({ item }) => (
-          <TouchableOpacity
-            onPress={() => {
-              handleModal(item.OwnerID);
-            }}
-          >
-            <Item
-              name={item.Name}
-              avatar={
-                "https://wo0of.s3.amazonaws.com/" +
-                item.DogID +
-                "?" +
-                Date.now().toString()
-              }
-            />
-          </TouchableOpacity>
+          <Item
+            id={item.OwnerID}
+            name={item.Name}
+            avatar={
+              "https://wo0of.s3.amazonaws.com/" +
+              item.DogID +
+              "?" +
+              Date.now().toString()
+            }
+          />
         )}
         keyExtractor={(item) => item.DogID}
       />
@@ -160,6 +179,16 @@ const LikedDogs = () => {
       >
         <View style={styles.modalBackground}>
           <View style={styles.form}>
+            <View style>
+              <Image
+                key={Date.now().toString()}
+                source={{ uri: imageurl }}
+                style={[
+                  styles.avatar,
+                  { justifyContent: "center", alignSelf: "center" },
+                ]}
+              />
+            </View>
             <View style={styles.row}>
               <Icon name="face-profile" size={30} style={styles.icon} />
               <Text style={styles.ownerText}>{nme}</Text>
@@ -209,8 +238,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   text: {
-    fontSize: 25,
-    marginLeft: 40,
+    fontSize: 15,
+    marginLeft: 20,
     alignSelf: "center",
     justifyContent: "center",
   },
@@ -225,7 +254,7 @@ const styles = StyleSheet.create({
   form: {
     borderRadius: 20,
     backgroundColor: "white",
-    height: 285,
+    height: 300,
     width: 285,
     justifyContent: "center",
   },
