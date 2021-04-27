@@ -16,8 +16,9 @@ import jwt_decode from "jwt-decode";
 import Axios from "../../utilities/axios";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 const Storage = require("../../utilities/TokenStorage");
-
+import Loader from "../../components/Loader";
 const LikedDogs = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const [userId, setUserId] = useState("");
   const [nme, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -29,6 +30,7 @@ const LikedDogs = () => {
   useEffect(() => {
     const getInfo = async () => {
       try {
+        setIsLoading(true);
         const data = await Storage.load("accessToken");
         const user = await jwt_decode(data, { complete: true });
         const id = user.userId;
@@ -41,11 +43,43 @@ const LikedDogs = () => {
           let response = await Axios.post("/getLikedDogs", obj);
           let res = response.data;
           console.log("array of liked dogs: " + JSON.stringify(res));
-          setDogs(res);
+          //setDogs(res);
+          let array = [];
+          for (var i = 0; i < res.length; i++) {
+            console.log(res[i].DogID);
+            try {
+              let obj2 = {
+                DogID: res[i].DogID,
+              };
+              let response2 = await Axios.post("/getDog", obj2);
+              console.log(response2);
+              let dog = {
+                DogID: res[i].DogID,
+                Name: response2.data.Name,
+                Bio: response2.data.Bio,
+                Breed: response2.data.Breed,
+                Size: response2.data.Size,
+                Age: response2.data.Age,
+                Sex: response2.data.Sex,
+                isPottyTrained: response2.data.isPottyTrained,
+                isNeutered: response2.data.isNeutered,
+                OwnerID: response2.data.OwnerID,
+              };
+              array.push(dog);
+              console.log(array);
+            } catch (e) {
+              setIsLoading(false);
+              Alert.alert(e.toString());
+            }
+          }
+          setDogs(array);
+          setIsLoading(false);
         } catch (e) {
+          setIsLoading(false);
           Alert.alert(e.toString());
         }
       } catch (e) {
+        setIsLoading(false);
         Alert.alert(e.toString());
       }
     };
@@ -70,7 +104,6 @@ const LikedDogs = () => {
   };
   const handleModal = async (ownerId) => {
     console.log("is this the correct id? : " + ownerId);
-    //showModal();
     try {
       let obj = {
         OwnerID: ownerId,
@@ -109,14 +142,14 @@ const LikedDogs = () => {
               name={item.Name}
               avatar={
                 "https://wo0of.s3.amazonaws.com/" +
-                item._id +
+                item.DogID +
                 "?" +
                 Date.now().toString()
               }
             />
           </TouchableOpacity>
         )}
-        keyExtractor={(item) => item._id.toString()}
+        keyExtractor={(item) => item.DogID}
       />
       <Modal
         transparent={true}
@@ -146,6 +179,7 @@ const LikedDogs = () => {
           </View>
         </View>
       </Modal>
+      <Loader isLoading={isLoading} />
     </SafeAreaView>
   );
 };
@@ -167,7 +201,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 30,
     alignSelf: "center",
-    //backgroundColor: "blue",
     padding: 10,
     margin: 10,
     width: 300,
