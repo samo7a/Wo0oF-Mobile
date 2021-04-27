@@ -46,7 +46,7 @@ const BrowseAdoptor = (props) => {
   };
   useEffect(() => {
     getDogs();
-  }, [dogs.length]);
+  }, [dogs.length, props.location]);
 
   const removeDogCard = (id) => {
     props.changeUpdate();

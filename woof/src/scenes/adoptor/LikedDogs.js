@@ -27,7 +27,8 @@ const LikedDogs = (props) => {
   const [bio, setBio] = useState("");
   const [dogs, setDogs] = useState([]);
   const [visible, setVisible] = useState(false);
-
+  const [visible2, setVisible2] = useState(false);
+  
 
   useEffect(() => {
     const getInfo = async () => {
@@ -208,6 +209,45 @@ const LikedDogs = (props) => {
           </View>
         </View>
       </Modal>
+
+      <Modal
+        transparent={true}
+        animationType="fade"
+        visible={visible}
+        style={{ zIndex: 1100 }}
+        onRequestClose={handleModal2}
+      >
+        <View style={styles.modalBackground}>
+          <View style={styles.form}>
+            <View style>
+              <Image
+                key={Date.now().toString()}
+                source={{ uri: imageurl }}
+                style={[
+                  styles.avatar,
+                  { justifyContent: "center", alignSelf: "center" },
+                ]}
+              />
+            </View>
+            <View style={styles.row}>
+              <Icon name="face-profile" size={30} style={styles.icon} />
+              <Text style={styles.ownerText}>{nme}</Text>
+            </View>
+            <View style={styles.row}>
+              <Icon name="phone" size={30} style={styles.icon} />
+              <Text style={styles.ownerText}>{phone}</Text>
+            </View>
+            <View style={styles.row}>
+              <Icon name="email-outline" size={30} style={styles.icon} />
+              <Text style={styles.ownerText}>{email}</Text>
+            </View>
+            <View style={styles.row}>
+              <Icon name="text-box-outline" size={30} style={styles.icon} />
+              <Text style={styles.ownerText}>{bio}</Text>
+            </View>
+          </View>
+        </View>
+      </Modal>
       <Loader isLoading={isLoading} />
     </SafeAreaView>
   );
@@ -254,7 +294,7 @@ const styles = StyleSheet.create({
   form: {
     borderRadius: 20,
     backgroundColor: "white",
-    height: 300,
+    height: 350,
     width: 285,
     justifyContent: "center",
   },

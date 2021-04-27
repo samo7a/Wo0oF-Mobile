@@ -28,7 +28,7 @@ import UploadImage from "../utilities/UploadImage";
 
 const Storage = require("../utilities/TokenStorage");
 
-const Profile = () => {
+const Profile = (props) => {
   const firstNameRef = useRef();
   const lastNameRef = useRef();
   const phoneRef = useRef();
@@ -140,6 +140,7 @@ const Profile = () => {
           setId(data.userId);
           setBio(data.bio);
           setAddress(data.location);
+          props.changeLocation(data.location);
           setFirstName(data.firstName);
           setLastName(data.lastName);
           setPhone(data.phone);

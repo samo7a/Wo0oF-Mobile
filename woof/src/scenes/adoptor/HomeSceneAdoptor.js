@@ -13,11 +13,15 @@ const Tab = createBottomTabNavigator();
 const HomeSceneAdoptor = () => {
   const [update, setUpdate] = useState(0);
 
+  const [location, setLocation] = useState(0);
 
+
+  const [location2, setLocation2] = useState(location)
   const [likeUpdate, setLikeUpdate] = useState(update);
   useEffect(()=>{
     setLikeUpdate(update);
-  }, [update]);
+    setLocation2(location);
+  }, [update, location]);
   return (
     <NavigationContainer>
       <Tab.Navigator
@@ -47,8 +51,8 @@ const HomeSceneAdoptor = () => {
           inactiveTintColor: "#2B2D42",
         }}
       >
-        <Tab.Screen name="Profile" component={Profile} />
-        <Tab.Screen name="Browse" title="Dogs" children={() => <BrowseAdoptor changeUpdate={() => setUpdate(update + 1)}/>} />
+        <Tab.Screen name="Profile" children={()=> <Profile changeLocation={(loc) => setLocation(loc)}/>} />
+        <Tab.Screen name="Browse" title="Dogs" children={() => <BrowseAdoptor location={location} changeUpdate={() => setUpdate(update + 1)}/>} />
         <Tab.Screen name="Liked Dogs" children={()=><LikedDogs update={likeUpdate}/>}/>
       </Tab.Navigator>
     </NavigationContainer>
