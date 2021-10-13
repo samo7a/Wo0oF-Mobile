@@ -16,4 +16,4 @@ User Stories:
  - [x] Dog owenrs can share their contact info with an adopter.
 
 Unimplemented Stories:
-- [] Dog owners and Adopters can chat on the app.
+- [ ] Dog owners and Adopters can chat on the app.
